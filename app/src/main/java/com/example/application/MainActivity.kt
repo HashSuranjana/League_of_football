@@ -1,5 +1,6 @@
 package com.example.application
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -42,67 +43,74 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-}
 
-@Composable
-fun MainScreen(){
+    @Composable
+    fun MainScreen(){
 
-    val orientation = LocalConfiguration.current.orientation // getting the orientation of the phone
+        val orientation = LocalConfiguration.current.orientation // getting the orientation of the phone
 
-    if (orientation == Configuration.ORIENTATION_PORTRAIT){
+        if (orientation == Configuration.ORIENTATION_PORTRAIT){
 
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = 40.dp),
-            verticalArrangement = Arrangement.Bottom){
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 40.dp),
+                verticalArrangement = Arrangement.Bottom){
 
-            Box(modifier = Modifier.fillMaxWidth().offset(y = -199.dp)){
-                Image(painter = painterResource(id = R.drawable.logo),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxWidth())
-            }
-
-            Row(modifier = Modifier
-                .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround){
-
-                Button(onClick = { }) {
-                    Text(text = "Add Leagues to DB")
-                    
+                Box(modifier = Modifier.fillMaxWidth().offset(y = -199.dp)){
+                    Image(painter = painterResource(id = R.drawable.logo),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxWidth())
                 }
 
-                Button(onClick = { }) {
-                    Text(text = "Search for clubs by League")
+                Row(modifier = Modifier
+                    .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround){
+
+                    Button(onClick = {
+                        val intent = Intent(this@MainActivity,AddActivity::class.java)
+                        startActivity(intent)
+                    }) {
+                        Text(text = "Add Leagues to DB")
+
+                    }
+
+                    Button(onClick = { }) {
+                        Text(text = "Search for clubs by League")
+
+                    }
 
                 }
 
-            }
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center){
 
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center){
+                    Button(onClick = { }) {
+                        Text(text = "Search for Clubs")
 
-                Button(onClick = { }) {
-                    Text(text = "Search for Clubs")
-
+                    }
                 }
-            }
 
+            }
+        }
+    }
+
+
+    @Preview(showBackground = true)
+    @Composable
+    fun DefaultPreview() {
+        ApplicationTheme {
+            Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                MainScreen()
+            }
         }
     }
 }
 
 
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    ApplicationTheme {
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            MainScreen()
-        }
-    }
-}
+
+
