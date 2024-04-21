@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
             ApplicationTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    MainScreen()
+                    MainScreen() // calling the composable function
                 }
             }
         }
@@ -87,6 +87,53 @@ class MainActivity : ComponentActivity() {
                     .height(80.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center){
+
+                    Button(onClick = { }) {
+                        Text(text = "Search for Clubs")
+
+                    }
+                }
+
+            }
+        }
+
+        else {
+            Row(modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 40.dp),
+                verticalAlignment = Alignment.Bottom){
+
+                Box(modifier = Modifier.fillMaxWidth().offset(y = -199.dp)){
+                    Image(painter = painterResource(id = R.drawable.logo),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxWidth())
+                }
+
+                Column(modifier = Modifier
+                    .fillMaxWidth(),
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.CenterHorizontally){
+
+                    Button(onClick = {
+                        val intent = Intent(this@MainActivity,AddActivity::class.java)
+                        startActivity(intent)
+                    }) {
+                        Text(text = "Add Leagues to DB")
+
+                    }
+
+                    Button(onClick = { }) {
+                        Text(text = "Search for clubs by League")
+
+                    }
+
+                }
+
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp),
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    horizontalAlignment = Alignment.CenterHorizontally){
 
                     Button(onClick = { }) {
                         Text(text = "Search for Clubs")

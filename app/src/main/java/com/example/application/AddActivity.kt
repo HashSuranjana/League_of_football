@@ -1,7 +1,6 @@
 package com.example.application
 
 import android.os.Bundle
-import android.support.v4.os.IResultReceiver2.Default
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +22,7 @@ class AddActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
+                    Greeting("Android")
                 }
             }
         }
@@ -31,14 +30,17 @@ class AddActivity : ComponentActivity() {
 }
 
 @Composable
-fun AddTeams(){
-
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        modifier = modifier
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
-fun AddTeamsPreview() {
+fun GreetingPreview() {
     ApplicationTheme {
-
+        Greeting("Android")
     }
 }
