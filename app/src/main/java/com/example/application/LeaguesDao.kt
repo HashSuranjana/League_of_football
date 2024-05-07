@@ -7,24 +7,25 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-interface ClubsDao {
 
-    @Query("select * from clubs")
-    suspend fun getAll(): List<Clubs>
+interface LeaguesDao {
+
+    @Query("select * from leagues")
+    suspend fun getAll(): List<Leagues>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(vararg users: Clubs)
+    suspend fun insertAll(vararg users: Leagues)
 
     // insert one club without replacing an identical one - duplicates allowed
     @Insert
-    suspend fun insertUser(club: Clubs)
+    suspend fun insertUser(club: Leagues)
 
     @Delete
-    suspend fun deleteUser(club: Clubs)
+    suspend fun deleteUser(club: Leagues)
 
-    @Query("select * from clubs where clubName LIKE :name")
-    fun findByLastName(name: String): Clubs
+    @Query("select * from leagues where leagueName LIKE :name")
+    fun findByLastName(name: String): Leagues
 
-    @Query("delete from clubs")
+    @Query("delete from leagues")
     suspend fun deleteAll()
 }

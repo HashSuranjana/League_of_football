@@ -1,6 +1,5 @@
 package com.example.application
 
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -27,14 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.room.Room
 import com.example.application.ui.theme.ApplicationTheme
 import kotlinx.coroutines.launch
 
 lateinit var database :FootBallDataBase
-lateinit var clubsDao :ClubsDao
+lateinit var leaguesDao: LeaguesDao
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,11 +40,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         database = Room.databaseBuilder(
-            this,FootBallDataBase::class.java,
+            this, FootBallDataBase::class.java,
             "FootBallDataBase"
-        ).build()
+        ).fallbackToDestructiveMigration()
+            .build()
 
-        clubsDao = database.clubsDao()
+        leaguesDao = database.leaguesDao()
 
         setContent {
             ApplicationTheme {
@@ -66,18 +65,19 @@ fun MainScreen(){
 
     if (orientation == Configuration.ORIENTATION_PORTRAIT){
 
-        var clubsData by remember { mutableStateOf("") }
-        LaunchedEffect(clubsData) {
-            clubsDao.insertAll(
-                Clubs(1,"Manchester","0001"),
-                Clubs(2,"Liverpool","0002"),
-                Clubs(3,"kaichen","0003"),
-                Clubs(4,"Crossby","0004")
+        var LeaguesData by remember { mutableStateOf("") }
+        LaunchedEffect(LeaguesData) {
+            leaguesDao.insertAll(
+                Leagues(1,"Manchester","0001","Football","LL"),
+                Leagues(2,"Liverpool","0002","Cricket","L"),
+                Leagues(3,"kaichen","0003","netball","LLL"),
+                Leagues(4,"Crossby","0004","hocky","LLp"),
+                Leagues(5,"hh","0005","kii","mj"),
             )
 
         }
 
-        val scope = rememberCoroutineScope()
+        val scope = rememberCoroutineScope() //remember the scope of the GUI
 
         Column(modifier = Modifier
             .fillMaxSize()
@@ -97,7 +97,7 @@ fun MainScreen(){
 
                 Button(onClick = {
                     scope.launch {
-                        clubsData = retrieveData(clubsDao)
+                        LeaguesData = retrieveData(leaguesDao)
                     }
 
                 }) {
@@ -131,7 +131,7 @@ fun MainScreen(){
             modifier = Modifier
                 .fillMaxWidth(),
             textAlign = TextAlign.Center,
-            text = clubsData
+            text = LeaguesData
         )
     }
 
@@ -178,15 +178,15 @@ fun MainScreen(){
 
     }
 }
-suspend fun retrieveData(clubsDao: ClubsDao): String {
-    var allClubs = ""
+suspend fun retrieveData(leaguesDao: LeaguesDao): String {
+    var allLeagues = ""
     // read the data
-    val clubs: List<Clubs> = clubsDao.getAll()
+    val leagues: List<Leagues> = leaguesDao.getAll()
 
-    for (i in clubs)
-        allClubs += "${i.clubName} ${i.clubID} \n"
+    for (i in leagues)
+        allLeagues += "${i.leagueName} ${i.leagueID} ${i.leagueSport} ${i.leagueDesc}\n"
 
-    return allClubs
+    return allLeagues
 }
 
 

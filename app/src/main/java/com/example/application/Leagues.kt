@@ -4,9 +4,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class Clubs (
+data class Leagues (
     @PrimaryKey(autoGenerate = true) var id: Int = 0,
-    val clubName:String ?,
-    val clubID:String ?
+    val leagueName:String ?,
+    val leagueID:String ?,
+    val leagueSport:String ?,
+    val leagueDesc:String ?
 )
+
 
