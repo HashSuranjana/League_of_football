@@ -101,7 +101,13 @@ class ClubsByLeague : ComponentActivity() {
 
                 Button(onClick = {
                     scope.launch {
-                        save()
+                        if (clubinfoDisplay.isNotEmpty()) { // Check if clubs have been fetched
+
+                            println(clubinfoDisplay)
+                            scope.launch {
+                                save(clubinfoDisplay) // Save clubs
+                            }
+                        }
                     }
                 }, modifier =Modifier.padding(top = 10.dp)) {
                     Text("Save clubs")
@@ -180,38 +186,33 @@ class ClubsByLeague : ComponentActivity() {
         return allClubs.toString()
     }
 
-    private suspend fun save()  {
-
-        val strb = StringBuilder() // collecting all the JSON string
-
-        val json = JSONObject(strb.toString()) // this contains the full JSON returned by the Web Service
+    private suspend fun save(clubsData: String) {
+        val json = JSONObject(clubsData) // Convert string to JSONObject
         val jsonArray: JSONArray = json.getJSONArray("teams")
 
 
-
-        for( i in 0..jsonArray.length() - 1) {
-
-            val club: JSONObject = jsonArray[i] as JSONObject // this is a json object
-
-            Clubs(i+1,
-                club.getString("idTeam"),
-                club.getString("strTeam"),
-                club.getString( "strTeamShort"),
-                club.getString("strAlternate"),
-                club.getString("intFormedYear"),
-                club.getString("strLeague"),
-                club.getString("idLeague"),
-                club.getString("strStadium"),
-                club.getString("strKeywords"),
-                club.getString("strStadiumThumb"),
-                club.getString("strStadiumLocation"),
-                club.getString("intStadiumCapacity"),
-                club.getString("strWebsite"),
-                club.getString("strTeamJersey"),
-                club.getString("strTeamLogo")
+        for (i in 0..jsonArray.length() ) {
+            val club: JSONObject = jsonArray[i] as JSONObject
+            // Save each club to the database
+            clubsDao.insertAll(
+                Clubs(i,
+                    club.getString("strTeam"),
+                    club.getString("idTeam"),
+                    club.getString("strTeamShort"),
+                    club.getString("strAlternate"),
+                    club.getString("intFormedYear"),
+                    club.getString("strLeague"),
+                    club.getString("idLeague"),
+                    club.getString("strStadium"),
+                    club.getString("strKeywords"),
+                    club.getString("strStadiumThumb"),
+                    club.getString("strStadiumLocation"),
+                    club.getString("intStadiumCapacity"),
+                    club.getString("strWebsite"),
+                    club.getString("strTeamJersey"),
+                    club.getString("strTeamLogo")
+                )
             )
-
-
         }
     }
 }

@@ -6,8 +6,9 @@ import androidx.room.PrimaryKey
 @Entity
 data class Clubs(
     @PrimaryKey(autoGenerate = true) var id :Int = 1,
-    val idTeam :String ?,
+
     val strTeam :String  ?,
+    val idTeam :String ?,
     val strTeamShort :String  ?,
     val strAlternate :String  ?,
     val intFormedYear :String  ?,
