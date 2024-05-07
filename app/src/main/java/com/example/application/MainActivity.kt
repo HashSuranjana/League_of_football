@@ -65,14 +65,21 @@ fun MainScreen(){
 
     if (orientation == Configuration.ORIENTATION_PORTRAIT){
 
-        var LeaguesData by remember { mutableStateOf("") }
+        var LeaguesData by remember { mutableStateOf("") } //defining a variable called LeaguesData
         LaunchedEffect(LeaguesData) {
+
+            //adding all the details of the leagues
             leaguesDao.insertAll(
-                Leagues(1,"Manchester","0001","Football","LL"),
-                Leagues(2,"Liverpool","0002","Cricket","L"),
-                Leagues(3,"kaichen","0003","netball","LLL"),
-                Leagues(4,"Crossby","0004","hocky","LLp"),
-                Leagues(5,"hh","0005","kii","mj"),
+                Leagues(1,"English Premier League","4328","Soccer","Premier League, EPL"),
+                Leagues(2,"English League Championship","4329","Soccer","Championship"),
+                Leagues(3,"Scottish Premier League","4330","Soccer","Scottish Premiership, SPFL"),
+                Leagues(4,"German Bundesliga","4331","Soccer","Bundesliga, Fußball-Bundesliga"),
+                Leagues(5,"Italian Series A","4332","Soccer","Serie A"),
+                Leagues(6,"French League 1","4334","Soccer","Ligue 1 Conforama"),
+                Leagues(7,"Greek Superleague Greece","4336", "Soccer", ""),
+                Leagues(8,"Dutch Eredivisie","4337","Soccer", "Eredivisie"),
+                Leagues(9,"Danish Superliga","4340","Soccer",""),
+                Leagues(10,"American Major League Soccer","4346","Soccer","MLS, Major League Soccer")
             )
 
         }
