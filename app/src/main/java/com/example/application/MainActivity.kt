@@ -142,7 +142,10 @@ class MainActivity : ComponentActivity() {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center){
 
-                    Button(onClick = { }) {
+                    Button(onClick = {
+                        val intent = Intent(this@MainActivity,SearchClubs::class.java)
+                        startActivity(intent)
+                    }) {
                         Text(text = "Search for Clubs")
 
                     }
@@ -190,7 +193,9 @@ class MainActivity : ComponentActivity() {
 
                     Column(horizontalAlignment = Alignment.Start,
                         modifier = Modifier.padding(20.dp)) {
-                        Button(onClick = { }) {
+                        Button(onClick = {
+
+                        }) {
                             Text(text = "Search for Clubs")
 
                         }
