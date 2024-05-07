@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,76 +56,112 @@ class ClubsByLeague : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    GUI()
+                    LeagueSearch()
 
                 }
             }
         }
     }
-    @Composable
 
-    fun GUI() {
-        var bookInfoDisplay by remember { mutableStateOf(" ") }
-// the book title keyword to search for
-        var keyword by remember { mutableStateOf("") }
-// Creates a CoroutineScope bound to the GUI composable lifecycle
-        val scope = rememberCoroutineScope()
+
+    @Composable
+    fun LeagueSearch() {
+
+        var clubinfoDisplay by rememberSaveable { mutableStateOf(" ") }
+
+        var keyword by remember { mutableStateOf("") }  // the league title keyword that searching
+
+        val scope = rememberCoroutineScope()  // Creates a CoroutineScope bound to the GUI composable lifecycle
+
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Text(text = "Search for Clubs",
+                modifier = Modifier.padding(top = 30.dp))
+
+            Column {
+
+                TextField(value = keyword, onValueChange = { keyword = it })
+            }
+
             Row {
                 Button(onClick = {
                     scope.launch {
-                        bookInfoDisplay = fetchBooks(keyword)
+
+                        clubinfoDisplay = fetchClubs(keyword)
                     }
-                }) {
-                    Text("Fetch Books")
+                }, modifier =Modifier.padding(top = 10.dp)) {
+                    Text("Retrieve Clubs")
                 }
-                TextField(value = keyword, onValueChange = { keyword = it })
+
+                Button(onClick = {
+                    scope.launch {
+
+                        clubinfoDisplay = fetchClubs(keyword)
+                    }
+                }, modifier =Modifier.padding(top = 10.dp)) {
+                    Text("Save clubs")
+                }
             }
+
             Text(
                 modifier = Modifier.verticalScroll(rememberScrollState()),
-                text = bookInfoDisplay
+                text = clubinfoDisplay
             )
         }
     }
 
-    suspend fun fetchBooks(keyword: String): String {
-//val url_string = "https://www.googleapis.com/books/v1/volumes?q=android&maxResults=25"
-        val url_string = "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=$keyword"
+    private suspend fun fetchClubs(keyword: String): String {
+
+        val new_keyword = keyword.split(" ").joinToString("%20") //if there are spaces inside the keyword replaces them with %20
+
+        val url_string = "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=$new_keyword" //new url to get the data
+
         val url = URL(url_string)
+
         val con: HttpURLConnection = url.openConnection() as HttpURLConnection
-// collecting all the JSON string
-        var stb = StringBuilder()
-// run the code of the launched coroutine in a new thread
+
+
+        var strb = StringBuilder() // collecting all the JSON string
+
+        // runs the code of the launched coroutine in a new thread
         withContext(Dispatchers.IO) {
-            var bf = BufferedReader(InputStreamReader(con.inputStream))
-            var line: String? = bf.readLine()
-            while (line != null) { // keep reading until no more lines of text
-                stb.append(line + "\n")
-                line = bf.readLine()
+
+            var buffreader = BufferedReader(InputStreamReader(con.inputStream))
+            var phrase: String? = buffreader.readLine()
+            while (phrase != null) { // keep reading until no more lines of text
+                strb.append(phrase + "\n")
+                phrase = buffreader.readLine()
             }
         }
-        val allBooks = parseJSON(stb)
-        return allBooks
+
+        val allClubs = parseJSON(strb)
+
+        return allClubs //Returning all clubs
     }
 
 
-    fun parseJSON(stb: StringBuilder): String {
-// this contains the full JSON returned by the Web Service
-        val json = JSONObject(stb.toString())
-// Information about all the books extracted by this function
-        var allBooks = StringBuilder()
-        var jsonArray: JSONArray = json.getJSONArray("teams")
-// extract all the books from the JSON array
-        for (i in 0..jsonArray.length() - 1) {
-            val book: JSONObject = jsonArray[i] as JSONObject // this is a json object
-// extract the title
+    private fun parseJSON(strb: StringBuilder): String {
 
-            allBooks.append(book.getString("strTeam"))
+
+        val json = JSONObject(strb.toString()) // this contains the full JSON returned by the Web Service
+
+        val allClubs = StringBuilder() // Information about all the books extracted by this function
+
+        val jsonArray: JSONArray = json.getJSONArray("teams")
+
+        // extract all the books from the JSON array
+        for (i in 0..jsonArray.length() - 1) {
+
+            val book: JSONObject = jsonArray[i] as JSONObject // this is a json object
+
+            // extract the title
+            allClubs.append(book.getString("strTeam") + "\n")
         }
-        return allBooks.toString()
+
+        return allClubs.toString()
     }
 }
 
