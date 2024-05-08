@@ -9,10 +9,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -142,7 +145,7 @@ class MainActivity : ComponentActivity() {
                     Button(onClick = {
                         val intent = Intent(this@MainActivity,SearchClubs::class.java)
                         startActivity(intent)
-                    }) {
+                    },modifier = Modifier.width(250.dp)) {
                         Text(text = "Search for Clubs")
                     }
                 }
@@ -199,7 +202,7 @@ class MainActivity : ComponentActivity() {
                 Row(modifier = Modifier
                     .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround){
+                    horizontalArrangement = Arrangement.Center){
 
                     Button(onClick = {
                         val intent = Intent(this@MainActivity, AddActivity::class.java)
@@ -210,28 +213,25 @@ class MainActivity : ComponentActivity() {
                             Toast.makeText(context,"Saved Successfully !", Toast.LENGTH_SHORT).show()
                         }
 
-                    }) {
+                    },modifier = Modifier.width(250.dp)) {
                         Text(text = "Add Leagues to DB")
                     }
+
+                    Spacer(modifier = Modifier.size(20.dp))
 
                     Button(onClick = {
                         val intent = Intent(this@MainActivity,ClubsByLeague::class.java)
                         startActivity(intent)
-                    }) {
+                    },modifier = Modifier.width(250.dp)) {
                         Text(text = "Search for clubs by League")
                     }
-                }
 
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center){
+                    Spacer(modifier = Modifier.size(20.dp))
 
                     Button(onClick = {
                         val intent = Intent(this@MainActivity,SearchClubs::class.java)
                         startActivity(intent)
-                    }) {
+                    },modifier = Modifier.width(250.dp)) {
                         Text(text = "Search for Clubs")
                     }
                 }

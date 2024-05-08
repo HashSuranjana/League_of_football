@@ -99,12 +99,9 @@ class SearchClubs : ComponentActivity() {
 
 
                 }
-
                 Text(text = clubsFound,
                     modifier =  Modifier.verticalScroll(rememberScrollState())
                 )
-
-                println(flagList)
 
                 for (i in flagList) {
 

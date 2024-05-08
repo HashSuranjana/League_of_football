@@ -5,10 +5,17 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -24,6 +31,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -119,50 +128,81 @@ class ClubsByLeague : ComponentActivity() {
                     text = clubinfoDisplay
                 )
             }
-        } else{
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
 
-                Text(text = "Search for Clubs",
-                    modifier = Modifier.padding(top = 30.dp))
+        } else {
 
-                Column {
+            Row (modifier = Modifier.fillMaxSize()){
 
-                    TextField(value = keyword, onValueChange = { keyword = it })
-                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.Start
+                ) {
 
-                Row {
-                    Button(onClick = {
-                        if(keyword !=""){
+                    Text(
+                        text = "Search for Clubs",
+                        modifier = Modifier.padding(top = 30.dp, start = 20.dp)
+                    )
+
+                    Spacer(modifier = Modifier.size(100.dp))
+
+                    Column(modifier = Modifier.padding(start = 20.dp)) {
+
+                        TextField(value = keyword, onValueChange = { keyword = it })
+                    }
+
+                    Spacer(modifier = Modifier.size(30.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+
+                        Button(onClick = {
+                            if (keyword != "") {
+                                scope.launch {
+
+                                    clubinfoDisplay = fetchClubs(keyword)
+                                }
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Please Enter an League Name to Search",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }, modifier = Modifier
+                            .padding(top = 10.dp)
+                            .width(150.dp)) {
+                            Text("Retrieve Clubs")
+                        }
+
+                        Spacer(modifier = Modifier.size(10.dp))
+
+                        Button(onClick = {
                             scope.launch {
-
-                                clubinfoDisplay = fetchClubs(keyword)
+                                leaguesDao.deleteAll()
+                                for (clubs in newList) {
+                                    leaguesDao.insertAll(clubs)
+                                }
                             }
-                        }else{
-                            Toast.makeText(context,"Please Enter an League Name to Search", Toast.LENGTH_SHORT).show()
+                        }, modifier = Modifier
+                            .padding(top = 10.dp)
+                            .width(150.dp)) {
+                            Text("Save clubs")
                         }
-                    }, modifier =Modifier.padding(top = 10.dp)) {
-                        Text("Retrieve Clubs")
-                    }
-
-                    Button(onClick = {
-                        scope.launch {
-                            leaguesDao.deleteAll()
-                            for (clubs in newList) {
-                                leaguesDao.insertAll(clubs)
-                            }
-                        }
-                    }, modifier =Modifier.padding(top = 10.dp)) {
-                        Text("Save clubs")
                     }
                 }
 
-                Text(
-                    modifier = Modifier.verticalScroll(rememberScrollState()),
-                    text = clubinfoDisplay
-                )
+                Column(modifier= Modifier.fillMaxHeight().background(Color.DarkGray).width(545.dp).padding(start=10.dp)) {
+                    Text(
+                        modifier = Modifier.verticalScroll(rememberScrollState()),
+                        text = clubinfoDisplay
+                    )
+                }
+
+
             }
         }
     }
