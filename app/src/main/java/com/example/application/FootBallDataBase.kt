@@ -9,26 +9,26 @@ import androidx.room.RoomDatabase
 abstract class FootBallDataBase : RoomDatabase() {
     abstract fun leaguesDao(): LeaguesDao
 
-    companion object {
-        @Volatile
-        private var Instance : FootBallDataBase ? = null
-
-        fun getDatabase(context: Context) :FootBallDataBase {
-            val tempInstance = Instance
-
-            if (tempInstance != null) {
-                return tempInstance
-            }
-
-            synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    FootBallDataBase::class.java,
-                    "Leagues DataBase"
-                ).build()
-                Instance= instance
-                return instance
-            }
-        }
-    }
+//    companion object {
+//        @Volatile
+//        private var Instance : FootBallDataBase ? = null
+//
+//        fun getDatabase(context: Context) :FootBallDataBase {
+//            val tempInstance = Instance
+//
+//            if (tempInstance != null) {
+//                return tempInstance
+//            }
+//
+//            synchronized(this) {
+//                val instance = Room.databaseBuilder(
+//                    context.applicationContext,
+//                    FootBallDataBase::class.java,
+//                    "Leagues DataBase"
+//                ).build()
+//                Instance= instance
+//                return instance
+//            }
+//        }
+//    }
 }

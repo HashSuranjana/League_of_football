@@ -2,6 +2,7 @@ package com.example.application
 
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.application.ui.theme.ApplicationTheme
@@ -56,9 +58,9 @@ class SearchClubs : ComponentActivity() {
 
         val context = LocalContext.current
 
-        var searchTerm by remember { mutableStateOf(TextFieldValue()) }
+        var searchTerm by remember { mutableStateOf("") }
         
-        val clubsFound = rememberSaveable() { mutableStateOf(emptyList<Leagues>()) }
+        var clubsFound by rememberSaveable { mutableStateOf("") }
 
         val scope = rememberCoroutineScope()  // Creates a CoroutineScope bound to the GUI composable lifecycle
 
@@ -78,7 +80,8 @@ class SearchClubs : ComponentActivity() {
             Row {
                 Button(onClick = {
                     scope.launch {
-                        clubFindings(searchTerm, context, clubsFound)
+                            clubsFound = retrieveData(searchTerm, leaguesDao)
+                        
                     }
                 }, modifier =Modifier.padding(top = 10.dp)) {
                     Text("Search")
@@ -86,30 +89,52 @@ class SearchClubs : ComponentActivity() {
 
 
             }
-
-            clubsFound.value.forEach{club->
-                
-                Text(text = club.strTeam ?: "")
-            }
+            
+            Text(text = clubsFound)
+            
         }
 
     }
 
-    fun clubFindings(searchTerm:TextFieldValue, context: Context, clubsFound:MutableState<List<Leagues>>){
-        runBlocking { 
-            launch { 
-                withContext(Dispatchers.IO){
-                    val clubsDao = FootBallDataBase.getDatabase(context).leaguesDao()
-                    val clubList = clubsDao.getAll()
-                    val filteredClubs = clubList.filter { club->
-                        club.strLeague?.contains(searchTerm.toString(), ignoreCase = true)?:false ||
-                                club.strTeam?.contains(searchTerm.toString(),ignoreCase = true)?:false
-                    }
-                    
-                    clubsFound.value = filteredClubs
-                }
+    @Composable
+    fun ClubItem(club :Leagues) {
+        Text(text = club.strTeam?:"")
+
+    }
+
+    suspend fun retrieveData(searchTerm:String, leaguesDao: LeaguesDao): String {
+        var allLeagues = ""
+        // read the data
+        val leagues: List<Leagues> = leaguesDao.getAll()
+
+        for(i in leagues) {
+
+            if(i.strTeam?.contains(searchTerm,ignoreCase = true) == true || i.strLeague?.contains(searchTerm,ignoreCase = true)==true){
+
+                allLeagues += "${i.strTeam}"
+
             }
         }
+
+        return allLeagues
     }
+
+//    fun clubFindings(searchTerm:TextFieldValue, context: Context, clubsFound:MutableState<List<Leagues>>):List<Leagues>{
+//        runBlocking {
+//            launch {
+//                withContext(Dispatchers.IO){
+//                    val clubsDao = FootBallDataBase.getDatabase(context).leaguesDao()
+//                    val clubList = clubsDao.getAll()
+//                    val filteredClubs = clubList.filter { club->
+//                        club.strLeague?.contains(searchTerm.toString(), ignoreCase = true)?:false ||
+//                                club.strTeam?.contains(searchTerm.toString(),ignoreCase = true)?:false
+//                    }
+//
+//                    clubsFound.value = filteredClubs
+//                }
+//            }
+//        }
+//        return clubsFound.value
+//    }
 }
 
