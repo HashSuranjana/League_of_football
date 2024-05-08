@@ -1,5 +1,6 @@
 package com.example.application
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import com.example.application.ui.theme.ApplicationTheme
 
@@ -25,17 +27,39 @@ class AddActivity : ComponentActivity() {
                 ) {
                     val info = intent.getStringExtra("Desc")
 
-                    LazyColumn {
+                    val orientation = LocalConfiguration.current.orientation // getting the orientation of the phone
 
-                        items(1) { index ->
+                    if(orientation == Configuration.ORIENTATION_PORTRAIT){
 
-                            if (info != null) {
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    textAlign = TextAlign.Center,
-                                    text = info
-                                )
+                        LazyColumn {
+
+                            items(1) { index ->
+
+                                if (info != null) {
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        text = info
+                                    )
+                                }
+                            }
+                        }
+
+                    }else {
+
+                        LazyColumn {
+
+                            items(1) { index ->
+
+                                if (info != null) {
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        textAlign = TextAlign.Center,
+                                        text = info
+                                    )
+                                }
                             }
                         }
                     }

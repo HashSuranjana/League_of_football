@@ -1,5 +1,6 @@
 package com.example.application
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -23,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.application.ui.theme.ApplicationTheme
@@ -58,7 +60,6 @@ class ClubsByLeague : ComponentActivity() {
 
     private var newList = mutableListOf<Leagues>() //List for save clubs data getting from the web service
 
-
     @Composable
     fun LeagueSearch() {
 
@@ -68,51 +69,101 @@ class ClubsByLeague : ComponentActivity() {
 
         val scope = rememberCoroutineScope()  // Creates a CoroutineScope bound to the GUI composable lifecycle
 
+        val orientation = LocalConfiguration.current.orientation // getting the orientation of the phone
+
         val context = LocalContext.current
 
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        if(orientation == Configuration.ORIENTATION_PORTRAIT) {
 
-            Text(text = "Search for Clubs",
-                modifier = Modifier.padding(top = 30.dp))
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-            Column {
+                Text(text = "Search for Clubs",
+                    modifier = Modifier.padding(top = 30.dp))
 
-                TextField(value = keyword, onValueChange = { keyword = it })
-            }
+                Column {
 
-            Row {
-                Button(onClick = {
-                    if(keyword !=""){
+                    TextField(value = keyword, onValueChange = { keyword = it })
+                }
+
+                Row {
+                    Button(onClick = {
+                        if(keyword !=""){
+                            scope.launch {
+
+                                clubinfoDisplay = fetchClubs(keyword)
+                            }
+                        }else{
+                            Toast.makeText(context,"Please Enter an League Name to Search", Toast.LENGTH_SHORT).show()
+                        }
+                    }, modifier =Modifier.padding(top = 10.dp)) {
+                        Text("Retrieve Clubs")
+                    }
+
+                    Button(onClick = {
                         scope.launch {
-
-                            clubinfoDisplay = fetchClubs(keyword)
+                            leaguesDao.deleteAll()
+                            for (clubs in newList) {
+                                leaguesDao.insertAll(clubs)
+                            }
                         }
-                    }else{
-                        Toast.makeText(context,"Please Enter an League Name to Search", Toast.LENGTH_SHORT).show()
+                    }, modifier =Modifier.padding(top = 10.dp)) {
+                        Text("Save clubs")
                     }
-                }, modifier =Modifier.padding(top = 10.dp)) {
-                    Text("Retrieve Clubs")
                 }
 
-                Button(onClick = {
-                    scope.launch {
-                        leaguesDao.deleteAll()
-                        for (clubs in newList) {
-                            leaguesDao.insertAll(clubs)
-                        }
-                    }
-                }, modifier =Modifier.padding(top = 10.dp)) {
-                    Text("Save clubs")
-                }
+                Text(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    text = clubinfoDisplay
+                )
             }
+        } else{
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-            Text(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                text = clubinfoDisplay
-            )
+                Text(text = "Search for Clubs",
+                    modifier = Modifier.padding(top = 30.dp))
+
+                Column {
+
+                    TextField(value = keyword, onValueChange = { keyword = it })
+                }
+
+                Row {
+                    Button(onClick = {
+                        if(keyword !=""){
+                            scope.launch {
+
+                                clubinfoDisplay = fetchClubs(keyword)
+                            }
+                        }else{
+                            Toast.makeText(context,"Please Enter an League Name to Search", Toast.LENGTH_SHORT).show()
+                        }
+                    }, modifier =Modifier.padding(top = 10.dp)) {
+                        Text("Retrieve Clubs")
+                    }
+
+                    Button(onClick = {
+                        scope.launch {
+                            leaguesDao.deleteAll()
+                            for (clubs in newList) {
+                                leaguesDao.insertAll(clubs)
+                            }
+                        }
+                    }, modifier =Modifier.padding(top = 10.dp)) {
+                        Text("Save clubs")
+                    }
+                }
+
+                Text(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    text = clubinfoDisplay
+                )
+            }
         }
     }
 

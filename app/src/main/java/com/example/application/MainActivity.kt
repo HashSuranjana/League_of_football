@@ -21,8 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -67,7 +67,9 @@ class MainActivity : ComponentActivity() {
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT){
 
-            val leaguesData by remember { mutableStateOf("") } //defining a variable called LeaguesData
+            val scope = rememberCoroutineScope() //remember the scope of the GUI
+
+            val leaguesData by rememberSaveable { mutableStateOf("") } //defining a variable called LeaguesData
             LaunchedEffect(leaguesData) {
 
                 leaguesDao.deleteAll() // delete if there any previously saved data in the database
@@ -98,18 +100,10 @@ class MainActivity : ComponentActivity() {
 
             }
 
-            val scope = rememberCoroutineScope() //remember the scope of the GUI
-
             Column(modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = 40.dp),
                 verticalArrangement = Arrangement.Bottom){
-
-    //                Box(modifier = Modifier.fillMaxWidth().offset(y = (-199).dp)){
-    //                    Image(painter = painterResource(id = R.drawable.logo),
-    //                        contentDescription = null,
-    //                        modifier = Modifier.fillMaxWidth())
-    //                }
 
                 Row(modifier = Modifier
                     .fillMaxWidth(),
@@ -136,10 +130,7 @@ class MainActivity : ComponentActivity() {
                         startActivity(intent)
                     }) {
                         Text(text = "Search for clubs by League")
-
                     }
-
-
                 }
 
                 Row(modifier = Modifier
@@ -153,10 +144,8 @@ class MainActivity : ComponentActivity() {
                         startActivity(intent)
                     }) {
                         Text(text = "Search for Clubs")
-
                     }
                 }
-
             }
 
             Text(
@@ -168,46 +157,92 @@ class MainActivity : ComponentActivity() {
         }
 
         else {
-            Row(modifier = Modifier
+
+            val scope = rememberCoroutineScope() //remember the scope of the GUI
+
+            val leaguesData by rememberSaveable { mutableStateOf("") } //defining a variable called LeaguesData
+
+            LaunchedEffect(leaguesData) {
+
+                leaguesDao.deleteAll() // delete if there any previously saved data in the database
+
+                //adding all the details of the leagues
+                leaguesDao.insertAll(
+
+                    Leagues(1,"English Premier League","4328","Soccer","Premier League, EPL","","","","","","","","","","",""),
+                    Leagues(2,"English League Championship","4329","Soccer","Championship","","","","","","","","","","",""),
+                    Leagues(3,"Scottish Premier League","4330","Soccer","Scottish Premiership, SPL","","","","","","","","","","",""),
+                    Leagues(4,"German Bundesliga","4331","Soccer","Bundesliga, Fuzzball-Bundesliga","","","","","","","","","","",""),
+                    Leagues(5,"Italian Series A","4332","Soccer","Series A","","","","","","","","","","",""),
+                    Leagues(6,"French League 1","4334","Soccer","League 1 Conformal","","","","","","","","","","",""),
+                    Leagues(7,"Greek Super league Greece","4336", "Soccer", "","","","","","","","","","","",""),
+                    Leagues(8,"Dutch Divisive","4337","Soccer", "Divisive","","","","","","","","","","",""),
+                    Leagues(9,"Danish Superlative","4340","Soccer","","","","","","","","","","","",""),
+                    Leagues(10,"American Major League Soccer","4346","Soccer","MLS, Major League Soccer","","","","","","","","","","",""),
+                    Leagues(11,"Swedish Allusiveness","4347","Soccer","Fotbollsallsvenskan","","","","","","","","","","",""),
+                    Leagues(12,"Mexican Primer League","4350","Soccer","Ligand MX","","","","","","","","","","",""),
+                    Leagues(13,"Brazilian Series A","4351","Soccer","","","","","","","","","","","",""),
+                    Leagues(14,"Ukrainian Premier League","4354","Soccer","","","","","","","","","","","",""),
+                    Leagues(15,"Russian Football Premier League","4355","Soccer","Чемпионат России по футболу","","","","","","","","","","",""),
+                    Leagues(16,"Australian A-League","4356","Soccer","A-League","","","","","","","","","","",""),
+                    Leagues(17,"Norwegian LineSeries","4358","Soccer","LineSeries","","","","","","","","","","",""),
+                    Leagues(18,"Chinese Super League","4359","Soccer","","","","","","","","","","","","")
+
+                )
+            }
+
+            Column(modifier = Modifier
                 .fillMaxSize()
-                .padding(end = 20.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically){
+                .padding(bottom = 40.dp),
+                verticalArrangement = Arrangement.Bottom){
 
-    //                Box(modifier = Modifier.offset(x = (-280).dp)){
-    //                    Image(painter = painterResource(id = R.drawable.logo),
-    //                        contentDescription = null,
-    //                        modifier = Modifier.fillMaxWidth())
-    //                }
+                Row(modifier = Modifier
+                    .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround){
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceAround) {
-                    Row(horizontalArrangement = Arrangement.SpaceAround,
-                        verticalAlignment = Alignment.CenterVertically){
+                    Button(onClick = {
+                        val intent = Intent(this@MainActivity, AddActivity::class.java)
 
-                        Button(onClick = {}) {
-                            Text(text = "Add Leagues to DB")
-
+                        scope.launch {
+                            intent.putExtra("Desc",retrieveData(leaguesDao))
+                            startActivity(intent)
+                            Toast.makeText(context,"Saved Successfully !", Toast.LENGTH_SHORT).show()
                         }
 
-                        Button(onClick = { }) {
-                            Text(text = "Search for clubs by League")
-
-                        }
-
+                    }) {
+                        Text(text = "Add Leagues to DB")
                     }
 
-                    Column(horizontalAlignment = Alignment.Start,
-                        modifier = Modifier.padding(20.dp)) {
-                        Button(onClick = {
+                    Button(onClick = {
+                        val intent = Intent(this@MainActivity,ClubsByLeague::class.java)
+                        startActivity(intent)
+                    }) {
+                        Text(text = "Search for clubs by League")
+                    }
+                }
 
-                        }) {
-                            Text(text = "Search for Clubs")
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center){
 
-                        }
+                    Button(onClick = {
+                        val intent = Intent(this@MainActivity,SearchClubs::class.java)
+                        startActivity(intent)
+                    }) {
+                        Text(text = "Search for Clubs")
                     }
                 }
             }
+
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                text = leaguesData
+            )
         }
     }
 }
