@@ -1,6 +1,7 @@
 package com.example.application
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -15,17 +16,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.room.Room
 import com.example.application.ui.theme.ApplicationTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,20 +36,11 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
-lateinit var database2 :ClubsDataBase
-lateinit var clubsDao: ClubsDao
 
 class ClubsByLeague : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        database2 = Room.databaseBuilder(
-            this, ClubsDataBase::class.java,
-            "ClubsDataBase"
-        ).fallbackToDestructiveMigration()
-            .build()
-
-        clubsDao = database2.clubsDao()
 
         setContent {
             ApplicationTheme {
@@ -66,15 +56,18 @@ class ClubsByLeague : ComponentActivity() {
         }
     }
 
+    var newList = mutableListOf<Leagues>()
+
 
     @Composable
     fun LeagueSearch() {
 
         var clubinfoDisplay by rememberSaveable { mutableStateOf(" ") }
 
-        var keyword by remember { mutableStateOf("") }  // the league title keyword that searching
+        var keyword by rememberSaveable { mutableStateOf("") }  // the league title keyword that searching
 
         val scope = rememberCoroutineScope()  // Creates a CoroutineScope bound to the GUI composable lifecycle
+        val context = LocalContext.current
 
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -91,9 +84,13 @@ class ClubsByLeague : ComponentActivity() {
 
             Row {
                 Button(onClick = {
-                    scope.launch {
+                    if(keyword !=""){
+                        scope.launch {
 
-                        clubinfoDisplay = fetchClubs(keyword)
+                            clubinfoDisplay = fetchClubs(keyword)
+                        }
+                    }else{
+                        Toast.makeText(context,"Please Enter an League Name to Search", Toast.LENGTH_SHORT).show()
                     }
                 }, modifier =Modifier.padding(top = 10.dp)) {
                     Text("Retrieve Clubs")
@@ -101,12 +98,9 @@ class ClubsByLeague : ComponentActivity() {
 
                 Button(onClick = {
                     scope.launch {
-                        if (clubinfoDisplay.isNotEmpty()) { // Check if clubs have been fetched
-
-                            println(clubinfoDisplay)
-                            scope.launch {
-                                save(clubinfoDisplay) // Save clubs
-                            }
+                        leaguesDao.deleteAll()
+                        for (clubs in newList) {
+                            leaguesDao.insertAll(clubs)
                         }
                     }
                 }, modifier =Modifier.padding(top = 10.dp)) {
@@ -115,7 +109,7 @@ class ClubsByLeague : ComponentActivity() {
             }
 
             Text(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
                 text = clubinfoDisplay
             )
         }
@@ -150,7 +144,6 @@ class ClubsByLeague : ComponentActivity() {
         return allClubs //Returning all clubs
     }
 
-
     private fun parseJSON(strb: StringBuilder): String {
 
 
@@ -165,7 +158,7 @@ class ClubsByLeague : ComponentActivity() {
 
             val club: JSONObject = jsonArray[i] as JSONObject // this is a json object
 
-            // extract the title
+            // extract the details
             allClubs.append(club.getString("idTeam") + "\n")
             allClubs.append(club.getString("strTeam") + "\n")
             allClubs.append(club.getString( "strTeamShort") + "\n")
@@ -181,40 +174,33 @@ class ClubsByLeague : ComponentActivity() {
             allClubs.append(club.getString("strWebsite") + "\n")
             allClubs.append(club.getString("strTeamJersey") + "\n")
             allClubs.append(club.getString("strTeamLogo") + "\n\n\n")
+
+            val newClub = Leagues(i+1,club.getString("idTeam"),
+                                        club.getString("strTeam") ,
+                                        club.getString( "strTeamShort"),
+                                        club.getString( "strAlternate"),
+                                        club.getString( "intFormedYear"),
+                                        club.getString( "strLeague"),
+                                        club.getString( "idLeague"),
+                                        club.getString( "strStadium"),
+                                        club.getString( "strKeywords"),
+                                        club.getString( "strStadiumThumb"),
+                                        club.getString( "strStadiumLocation"),
+                                        club.getString( "intStadiumCapacity"),
+                                        club.getString( "strWebsite"),
+                                        club.getString( "strTeamJersey"),
+                                        club.getString( "strTeamLogo")
+
+            )
+
+            newList.add(i,newClub)
+
         }
 
         return allClubs.toString()
     }
 
-    private suspend fun save(clubsData: String) {
-        val json = JSONObject(clubsData) // Convert string to JSONObject
-        val jsonArray: JSONArray = json.getJSONArray("teams")
 
-
-        for (i in 0..jsonArray.length() ) {
-            val club: JSONObject = jsonArray[i] as JSONObject
-            // Save each club to the database
-            clubsDao.insertAll(
-                Clubs(i,
-                    club.getString("strTeam"),
-                    club.getString("idTeam"),
-                    club.getString("strTeamShort"),
-                    club.getString("strAlternate"),
-                    club.getString("intFormedYear"),
-                    club.getString("strLeague"),
-                    club.getString("idLeague"),
-                    club.getString("strStadium"),
-                    club.getString("strKeywords"),
-                    club.getString("strStadiumThumb"),
-                    club.getString("strStadiumLocation"),
-                    club.getString("intStadiumCapacity"),
-                    club.getString("strWebsite"),
-                    club.getString("strTeamJersey"),
-                    club.getString("strTeamLogo")
-                )
-            )
-        }
-    }
 }
 
 

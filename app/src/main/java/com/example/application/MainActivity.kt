@@ -3,6 +3,7 @@ package com.example.application
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.room.Room
@@ -61,33 +63,36 @@ class MainActivity : ComponentActivity() {
     fun MainScreen(){
 
         val orientation = LocalConfiguration.current.orientation // getting the orientation of the phone
+        val context = LocalContext.current
 
         if (orientation == Configuration.ORIENTATION_PORTRAIT){
 
             val leaguesData by remember { mutableStateOf("") } //defining a variable called LeaguesData
             LaunchedEffect(leaguesData) {
 
+                leaguesDao.deleteAll()
+
                 //adding all the details of the leagues
                 leaguesDao.insertAll(
 
-                    Leagues(1,"English Premier League","4328","Soccer","Premier League, EPL"),
-                    Leagues(2,"English League Championship","4329","Soccer","Championship"),
-                    Leagues(3,"Scottish Premier League","4330","Soccer","Scottish Premiership, SPL"),
-                    Leagues(4,"German Bundesliga","4331","Soccer","Bundesliga, Fuzzball-Bundesliga"),
-                    Leagues(5,"Italian Series A","4332","Soccer","Series A"),
-                    Leagues(6,"French League 1","4334","Soccer","League 1 Conformal"),
-                    Leagues(7,"Greek Super league Greece","4336", "Soccer", ""),
-                    Leagues(8,"Dutch Divisive","4337","Soccer", "Divisive"),
-                    Leagues(9,"Danish Superlative","4340","Soccer",""),
-                    Leagues(10,"American Major League Soccer","4346","Soccer","MLS, Major League Soccer"),
-                    Leagues(11,"Swedish Allusiveness","4347","Soccer","Fotbollsallsvenskan"),
-                    Leagues(12,"Mexican Primer League","4350","Soccer","Ligand MX"),
-                    Leagues(13,"Brazilian Series A","4351","Soccer",""),
-                    Leagues(14,"Ukrainian Premier League","4354","Soccer",""),
-                    Leagues(15,"Russian Football Premier League","4355","Soccer","Чемпионат России по футболу"),
-                    Leagues(16,"Australian A-League","4356","Soccer","A-League"),
-                    Leagues(17,"Norwegian LineSeries","4358","Soccer","LineSeries"),
-                    Leagues(18,"Chinese Super League","4359","Soccer","")
+                    Leagues(1,"English Premier League","4328","Soccer","Premier League, EPL","","","","","","","","","","",""),
+                    Leagues(2,"English League Championship","4329","Soccer","Championship","","","","","","","","","","",""),
+                    Leagues(3,"Scottish Premier League","4330","Soccer","Scottish Premiership, SPL","","","","","","","","","","",""),
+                    Leagues(4,"German Bundesliga","4331","Soccer","Bundesliga, Fuzzball-Bundesliga","","","","","","","","","","",""),
+                    Leagues(5,"Italian Series A","4332","Soccer","Series A","","","","","","","","","","",""),
+                    Leagues(6,"French League 1","4334","Soccer","League 1 Conformal","","","","","","","","","","",""),
+                    Leagues(7,"Greek Super league Greece","4336", "Soccer", "","","","","","","","","","","",""),
+                    Leagues(8,"Dutch Divisive","4337","Soccer", "Divisive","","","","","","","","","","",""),
+                    Leagues(9,"Danish Superlative","4340","Soccer","","","","","","","","","","","",""),
+                    Leagues(10,"American Major League Soccer","4346","Soccer","MLS, Major League Soccer","","","","","","","","","","",""),
+                    Leagues(11,"Swedish Allusiveness","4347","Soccer","Fotbollsallsvenskan","","","","","","","","","","",""),
+                    Leagues(12,"Mexican Primer League","4350","Soccer","Ligand MX","","","","","","","","","","",""),
+                    Leagues(13,"Brazilian Series A","4351","Soccer","","","","","","","","","","","",""),
+                    Leagues(14,"Ukrainian Premier League","4354","Soccer","","","","","","","","","","","",""),
+                    Leagues(15,"Russian Football Premier League","4355","Soccer","Чемпионат России по футболу","","","","","","","","","","",""),
+                    Leagues(16,"Australian A-League","4356","Soccer","A-League","","","","","","","","","","",""),
+                    Leagues(17,"Norwegian LineSeries","4358","Soccer","LineSeries","","","","","","","","","","",""),
+                    Leagues(18,"Chinese Super League","4359","Soccer","","","","","","","","","","","","")
 
                 )
 
@@ -117,6 +122,7 @@ class MainActivity : ComponentActivity() {
                         scope.launch {
                             intent.putExtra("Desc",retrieveData(leaguesDao))
                             startActivity(intent)
+                            Toast.makeText(context,"Saved Successfully !", Toast.LENGTH_SHORT).show()
                         }
 
 
@@ -213,7 +219,7 @@ suspend fun retrieveData(leaguesDao: LeaguesDao): String {
 
     for (i in leagues)
 
-        allLeagues += "${i.leagueID} \n ${i.leagueName} \n  ${i.leagueSport} \n ${i.leagueDesc} \n\n\n"
+        allLeagues += "${i.strTeam} \n ${i.strLeague} \n  ${i.strAlternate} \n ${i.strKeywords} \n\n\n"
 
     return allLeagues
 }

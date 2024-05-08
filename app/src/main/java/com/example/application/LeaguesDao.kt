@@ -23,7 +23,7 @@ interface LeaguesDao {
     @Delete
     suspend fun deleteUser(club: Leagues)
 
-    @Query("select * from leagues where leagueName LIKE :name")
+    @Query("select * from leagues where strTeam LIKE :name")
     fun findByLastName(name: String): Leagues
 
     @Query("delete from leagues")
