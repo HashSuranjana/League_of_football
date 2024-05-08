@@ -56,7 +56,7 @@ class ClubsByLeague : ComponentActivity() {
         }
     }
 
-    var newList = mutableListOf<Leagues>()
+    private var newList = mutableListOf<Leagues>() //List for save clubs data getting from the web service
 
 
     @Composable
@@ -67,6 +67,7 @@ class ClubsByLeague : ComponentActivity() {
         var keyword by rememberSaveable { mutableStateOf("") }  // the league title keyword that searching
 
         val scope = rememberCoroutineScope()  // Creates a CoroutineScope bound to the GUI composable lifecycle
+
         val context = LocalContext.current
 
         Column(
@@ -109,7 +110,7 @@ class ClubsByLeague : ComponentActivity() {
             }
 
             Text(
-                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                modifier = Modifier.verticalScroll(rememberScrollState()),
                 text = clubinfoDisplay
             )
         }
@@ -117,9 +118,11 @@ class ClubsByLeague : ComponentActivity() {
 
     private suspend fun fetchClubs(keyword: String): String {
 
-        val newKeyword = keyword.split(" ").joinToString("%20") //if there are spaces inside the keyword replaces them with %20
+        val newKeyword = keyword.split(" ")
+            .joinToString("%20") //if there are spaces inside the keyword replaces them with %20
 
-        val urlString = "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=$newKeyword" //new url to get the data
+        val urlString =
+            "https://www.thesportsdb.com/api/v1/json/3/search_all_teams.php?l=$newKeyword" //new url to get the data
 
         val url = URL(urlString)
 
@@ -139,9 +142,7 @@ class ClubsByLeague : ComponentActivity() {
             }
         }
 
-        val allClubs = parseJSON(strb)
-
-        return allClubs //Returning all clubs
+        return parseJSON(strb) //Returning all clubs
     }
 
     private fun parseJSON(strb: StringBuilder): String {
@@ -193,7 +194,7 @@ class ClubsByLeague : ComponentActivity() {
 
             )
 
-            newList.add(i,newClub)
+            newList.add(i,newClub) // adding items to the newList
 
         }
 

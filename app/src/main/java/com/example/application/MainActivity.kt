@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
             val leaguesData by remember { mutableStateOf("") } //defining a variable called LeaguesData
             LaunchedEffect(leaguesData) {
 
-                leaguesDao.deleteAll()
+                leaguesDao.deleteAll() // delete if there any previously saved data in the database
 
                 //adding all the details of the leagues
                 leaguesDao.insertAll(
