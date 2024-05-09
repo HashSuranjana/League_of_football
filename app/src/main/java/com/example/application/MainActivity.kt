@@ -172,24 +172,24 @@ class MainActivity : ComponentActivity() {
                 //adding all the details of the leagues
                 leaguesDao.insertAll(
 
-                    Leagues(1,"English Premier League","4328","Soccer","Premier League, EPL","","","","","","","","","","",""),
-                    Leagues(2,"English League Championship","4329","Soccer","Championship","","","","","","","","","","",""),
-                    Leagues(3,"Scottish Premier League","4330","Soccer","Scottish Premiership, SPL","","","","","","","","","","",""),
-                    Leagues(4,"German Bundesliga","4331","Soccer","Bundesliga, Fuzzball-Bundesliga","","","","","","","","","","",""),
-                    Leagues(5,"Italian Series A","4332","Soccer","Series A","","","","","","","","","","",""),
-                    Leagues(6,"French League 1","4334","Soccer","League 1 Conformal","","","","","","","","","","",""),
-                    Leagues(7,"Greek Super league Greece","4336", "Soccer", "","","","","","","","","","","",""),
-                    Leagues(8,"Dutch Divisive","4337","Soccer", "Divisive","","","","","","","","","","",""),
-                    Leagues(9,"Danish Superlative","4340","Soccer","","","","","","","","","","","",""),
-                    Leagues(10,"American Major League Soccer","4346","Soccer","MLS, Major League Soccer","","","","","","","","","","",""),
-                    Leagues(11,"Swedish Allusiveness","4347","Soccer","Fotbollsallsvenskan","","","","","","","","","","",""),
-                    Leagues(12,"Mexican Primer League","4350","Soccer","Ligand MX","","","","","","","","","","",""),
-                    Leagues(13,"Brazilian Series A","4351","Soccer","","","","","","","","","","","",""),
-                    Leagues(14,"Ukrainian Premier League","4354","Soccer","","","","","","","","","","","",""),
-                    Leagues(15,"Russian Football Premier League","4355","Soccer","Чемпионат России по футболу","","","","","","","","","","",""),
-                    Leagues(16,"Australian A-League","4356","Soccer","A-League","","","","","","","","","","",""),
-                    Leagues(17,"Norwegian LineSeries","4358","Soccer","LineSeries","","","","","","","","","","",""),
-                    Leagues(18,"Chinese Super League","4359","Soccer","","","","","","","","","","","","")
+                    Leagues(1,"4328","English Premier League","Soccer","Premier League, EPL","","","","","","","","","","",""),
+                    Leagues(2,"4329","English League Championship","Soccer","Championship","","","","","","","","","","",""),
+                    Leagues(3,"4330","Scottish Premier League","Soccer","Scottish Premiership, SPL","","","","","","","","","","",""),
+                    Leagues(4,"4331","German Bundesliga","Soccer","Bundesliga, Fuzzball-Bundesliga","","","","","","","","","","",""),
+                    Leagues(5,"4332","Italian Series A","Soccer","Series A","","","","","","","","","","",""),
+                    Leagues(6,"4334","French League 1","Soccer","League 1 Conformal","","","","","","","","","","",""),
+                    Leagues(7,"4336","Greek Super league Greece", "Soccer", "","","","","","","","","","","",""),
+                    Leagues(8,"4337","Dutch Divisive","Soccer", "Divisive","","","","","","","","","","",""),
+                    Leagues(9,"4340","Danish Superlative","Soccer","","","","","","","","","","","",""),
+                    Leagues(10,"4346","American Major League Soccer","Soccer","MLS, Major League Soccer","","","","","","","","","","",""),
+                    Leagues(11,"4347","Swedish Allusiveness","Soccer","Fotbollsallsvenskan","","","","","","","","","","",""),
+                    Leagues(12,"4350","Mexican Primer League","Soccer","Ligand MX","","","","","","","","","","",""),
+                    Leagues(13,"4351","Brazilian Series A","Soccer","","","","","","","","","","","",""),
+                    Leagues(14,"4354","Ukrainian Premier League","Soccer","","","","","","","","","","","",""),
+                    Leagues(15,"4355","Russian Football Premier League","Soccer","Чемпионат России по футболу","","","","","","","","","","",""),
+                    Leagues(16,"4356","Australian A-League","Soccer","A-League","","","","","","","","","","",""),
+                    Leagues(17,"4358","Norwegian LineSeries","Soccer","LineSeries","","","","","","","","","","",""),
+                    Leagues(18,"4359","Chinese Super League","Soccer","","","","","","","","","","","","")
 
                 )
             }
@@ -210,7 +210,7 @@ class MainActivity : ComponentActivity() {
                         scope.launch {
                             intent.putExtra("Desc",retrieveData(leaguesDao))
                             startActivity(intent)
-                            Toast.makeText(context,"Saved Successfully !", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,"Load Successfully !", Toast.LENGTH_SHORT).show()
                         }
 
                     },modifier = Modifier.width(250.dp)) {
@@ -254,7 +254,23 @@ suspend fun retrieveData(leaguesDao: LeaguesDao): String {
 
     for (i in leagues)
 
-        allLeagues += "${i.strTeam} \n ${i.strLeague} \n  ${i.strAlternate} \n ${i.strKeywords} \n\n\n"
+        allLeagues += " Name : ${i.strTeam} \n"+
+                " Team Id : ${i.idTeam} \n" +
+                " League Name : ${i.strLeague} \n" +
+                " League ID : ${i.idLeague} \n" +
+                " Year : ${i.intFormedYear} \n" +
+                " Short Name : ${i.strTeamShort} \n" +
+                " Alternate : ${i.strAlternate} \n" +
+                " Keywords : ${i.strKeywords} \n" +
+                " Stadium : ${i.strStadium} \n" +
+                " Stadium Logo : ${i.strStadiumThumb} \n" +
+                " Stadium Loc : ${i.strStadiumLocation} \n" +
+                " Stadium Capacity : ${i.strStadiumLocation} \n" +
+                " Web : ${i.strWebsite} \n" +
+                " Jersey : ${i.strTeamJersey} \n" +
+                " Team Logo : ${i.strTeamLogo} \n" +
+                "\n\n\n"
+
 
     return allLeagues
 }

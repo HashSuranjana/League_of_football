@@ -6,13 +6,13 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -32,10 +32,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.application.ui.theme.ApplicationTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -86,19 +88,28 @@ class ClubsByLeague : ComponentActivity() {
 
             Column(
                 modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.Start
             ) {
 
-                Text(text = "Search for Clubs",
-                    modifier = Modifier.padding(top = 30.dp))
+                Text(text = "Search for Leagues ......",
+                    modifier = Modifier.padding(top = 30.dp).padding(10.dp),
+                    style = TextStyle(fontSize = 25.sp, fontWeight = FontWeight.ExtraBold)
+                )
 
-                Column {
+                Spacer(modifier = Modifier.size(20.dp))
 
-                    TextField(value = keyword, onValueChange = { keyword = it })
+                Column(modifier= Modifier.fillMaxWidth().padding(10.dp)) {
+
+                    TextField(value = keyword, onValueChange = { keyword = it },
+                        modifier = Modifier.width(400.dp))
                 }
 
-                Row {
+                Spacer(modifier = Modifier.size(20.dp))
+
+                Row(modifier= Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center) {
                     Button(onClick = {
+
                         if(keyword !=""){
                             scope.launch {
 
@@ -107,9 +118,11 @@ class ClubsByLeague : ComponentActivity() {
                         }else{
                             Toast.makeText(context,"Please Enter an League Name to Search", Toast.LENGTH_SHORT).show()
                         }
-                    }, modifier =Modifier.padding(top = 10.dp)) {
+                    }, modifier =Modifier.padding(top = 10.dp).width(150.dp)) {
                         Text("Retrieve Clubs")
                     }
+
+                    Spacer(modifier = Modifier.size(20.dp))
 
                     Button(onClick = {
                         scope.launch {
@@ -118,13 +131,16 @@ class ClubsByLeague : ComponentActivity() {
                                 leaguesDao.insertAll(clubs)
                             }
                         }
-                    }, modifier =Modifier.padding(top = 10.dp)) {
+                    }, modifier =Modifier.padding(top = 10.dp).width(150.dp)) {
                         Text("Save clubs")
                     }
                 }
 
+                Spacer(modifier = Modifier.size(20.dp))
+
                 Text(
-                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    modifier = Modifier.verticalScroll(rememberScrollState()).padding(start = 10.dp),
+                    style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
                     text = clubinfoDisplay
                 )
             }
@@ -140,7 +156,8 @@ class ClubsByLeague : ComponentActivity() {
                 ) {
 
                     Text(
-                        text = "Search for Clubs",
+                        text = "Search for Leagues ......",
+                        style = TextStyle(fontSize = 25.sp, fontWeight = FontWeight.ExtraBold),
                         modifier = Modifier.padding(top = 30.dp, start = 20.dp)
                     )
 
@@ -195,9 +212,10 @@ class ClubsByLeague : ComponentActivity() {
                     }
                 }
 
-                Column(modifier= Modifier.fillMaxHeight().background(Color.DarkGray).width(545.dp).padding(start=10.dp)) {
+                Column(modifier= Modifier.fillMaxHeight().width(545.dp).padding(start=10.dp)) {
                     Text(
                         modifier = Modifier.verticalScroll(rememberScrollState()),
+                        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp),
                         text = clubinfoDisplay
                     )
                 }
@@ -251,21 +269,21 @@ class ClubsByLeague : ComponentActivity() {
             val club: JSONObject = jsonArray[i] as JSONObject // this is a json object
 
             // extract the details
-            allClubs.append(club.getString("idTeam") + "\n")
-            allClubs.append(club.getString("strTeam") + "\n")
-            allClubs.append(club.getString( "strTeamShort") + "\n")
-            allClubs.append(club.getString("strAlternate") + "\n")
-            allClubs.append(club.getString("intFormedYear") + "\n")
-            allClubs.append(club.getString("strLeague") + "\n")
-            allClubs.append(club.getString("idLeague") + "\n")
-            allClubs.append(club.getString("strStadium") + "\n")
-            allClubs.append(club.getString("strKeywords") + "\n")
-            allClubs.append(club.getString("strStadiumThumb") + "\n")
-            allClubs.append(club.getString("strStadiumLocation") + "\n")
-            allClubs.append(club.getString("intStadiumCapacity") + "\n")
-            allClubs.append(club.getString("strWebsite") + "\n")
-            allClubs.append(club.getString("strTeamJersey") + "\n")
-            allClubs.append(club.getString("strTeamLogo") + "\n\n\n")
+            allClubs.append("Name :" + club.getString("strTeam") + "\n")
+            allClubs.append("Team Id :" + club.getString("idTeam") + "\n")
+            allClubs.append("Short Name :" + club.getString( "strTeamShort") + "\n")
+            allClubs.append("Alternate :" + club.getString("strAlternate") + "\n")
+            allClubs.append("Year :" + club.getString("intFormedYear") + "\n")
+            allClubs.append("League :" + club.getString("strLeague") + "\n")
+            allClubs.append("League Id :" + club.getString("idLeague") + "\n")
+            allClubs.append("Keywords :" + club.getString("strKeywords") + "\n")
+            allClubs.append("Stadium :" + club.getString("strStadium") + "\n")
+            allClubs.append("Stadium Logo :" + club.getString("strStadiumThumb") + "\n")
+            allClubs.append("Stadium Loc :" + club.getString("strStadiumLocation") + "\n")
+            allClubs.append("Stadium Capacity :" + club.getString("intStadiumCapacity") + "\n")
+            allClubs.append("Web :" + club.getString("strWebsite") + "\n")
+            allClubs.append("Jersey :" + club.getString("strTeamJersey") + "\n")
+            allClubs.append("Team Logo :" + club.getString("strTeamLogo") + "\n\n\n")
 
             val newClub = Leagues(i+1,club.getString("idTeam"),
                                         club.getString("strTeam") ,
