@@ -6,17 +6,19 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-interface LeaguesDao {
+
+interface ClubsDao {
 
     @Query("select * from leagues")
-    suspend fun getAll(): List<Leagues>
+    suspend fun getAll(): List<Clubs>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(vararg leagues: Leagues)
+    suspend fun insertAll(vararg clubs: Clubs)
 
-    @Query("select * from leagues where leagueName LIKE :name")
-    fun findByLastName(name: String): Leagues
+    @Query("select * from clubs where strTeam LIKE :name")
+    fun findByLastName(name: String): Clubs
 
-    @Query("delete from leagues")
+    @Query("delete from clubs")
     suspend fun deleteAll()
+
 }

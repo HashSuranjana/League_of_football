@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -44,6 +42,7 @@ import com.example.application.ui.theme.ApplicationTheme
 import kotlinx.coroutines.launch
 
 lateinit var database :FootBallDataBase
+lateinit var clubsDao: ClubsDao
 lateinit var leaguesDao: LeaguesDao
 
 class MainActivity : ComponentActivity() {
@@ -57,6 +56,7 @@ class MainActivity : ComponentActivity() {
         ).fallbackToDestructiveMigration()
             .build()
 
+        clubsDao = database.clubsDao()
         leaguesDao = database.leaguesDao()
 
         setContent {
@@ -87,24 +87,27 @@ class MainActivity : ComponentActivity() {
                 //adding all the details of the leagues
                 leaguesDao.insertAll(
 
-                    Leagues(1,"English Premier League","4328","Soccer","Premier League, EPL","","","","","","","","","","",""),
-                    Leagues(2,"English League Championship","4329","Soccer","Championship","","","","","","","","","","",""),
-                    Leagues(3,"Scottish Premier League","4330","Soccer","Scottish Premiership, SPL","","","","","","","","","","",""),
-                    Leagues(4,"German Bundesliga","4331","Soccer","Bundesliga, Fuzzball-Bundesliga","","","","","","","","","","",""),
-                    Leagues(5,"Italian Series A","4332","Soccer","Series A","","","","","","","","","","",""),
-                    Leagues(6,"French League 1","4334","Soccer","League 1 Conformal","","","","","","","","","","",""),
-                    Leagues(7,"Greek Super league Greece","4336", "Soccer", "","","","","","","","","","","",""),
-                    Leagues(8,"Dutch Divisive","4337","Soccer", "Divisive","","","","","","","","","","",""),
-                    Leagues(9,"Danish Superlative","4340","Soccer","","","","","","","","","","","",""),
-                    Leagues(10,"American Major League Soccer","4346","Soccer","MLS, Major League Soccer","","","","","","","","","","",""),
-                    Leagues(11,"Swedish Allusiveness","4347","Soccer","Fotbollsallsvenskan","","","","","","","","","","",""),
-                    Leagues(12,"Mexican Primer League","4350","Soccer","Ligand MX","","","","","","","","","","",""),
-                    Leagues(13,"Brazilian Series A","4351","Soccer","","","","","","","","","","","",""),
-                    Leagues(14,"Ukrainian Premier League","4354","Soccer","","","","","","","","","","","",""),
-                    Leagues(15,"Russian Football Premier League","4355","Soccer","Чемпионат России по футболу","","","","","","","","","","",""),
-                    Leagues(16,"Australian A-League","4356","Soccer","A-League","","","","","","","","","","",""),
-                    Leagues(17,"Norwegian LineSeries","4358","Soccer","LineSeries","","","","","","","","","","",""),
-                    Leagues(18,"Chinese Super League","4359","Soccer","","","","","","","","","","","","")
+                    Leagues(1,"4329","English League Championship","Soccer","Championship, English League Championship"),
+                    Leagues(2,"4330","Scottish Premier League","Soccer","Scottish Premiership, SPL, Scottish Premier League"),
+                    Leagues(3,"4331","German Bundesliga","Soccer","Bundesliga, Fuzzball-Bundesliga, German Bundesliga"),
+                    Leagues(4,"4332","Italian Series A","Soccer","Series A, Italian Series A"),
+                    Leagues(5,"4334","French League 1","Soccer","League 1 Conformal, French League 1"),
+                    Leagues(6,"4335","Spanish La Ligand","Soccer","LaLigand Santander, La Ligand, Spanish La Ligand"),
+                    Leagues(7,"4336","Greek Super league Greece","Soccer","Greek Super league Greece"),
+                    Leagues(8,"4337","Dutch Eredivisie","Soccer","Divisive, Dutch Eredivisie"),
+                    Leagues(9,"4338","Belgian First Division A","Soccer","Jupiter Pro League, Belgian First Division A"),
+                    Leagues(10,"4339","Turkish Super Lig","Soccer","Super Lig, Turkish Super Lig"),
+                    Leagues(11,"4340","Danish Superlative","Soccer","Danish Superlative"),
+                    Leagues(12,"4344","Portuguese Prairie Ligand","Soccer","Ligand NOS, Portuguese Prairie Ligand"),
+                    Leagues(13,"4346","American Major League Soccer","Soccer","MLS, Major League Soccer, American Major League Soccer"),
+                    Leagues(14,"4347","Swedish Allusiveness","Soccer","Fotbollsallsvenskan, Swedish Allusiveness"),
+                    Leagues(15,"4350","Mexican Primer League","Soccer","Ligand MX, Mexican Primer League"),
+                    Leagues(16,"4351","Brazilian Series A","Soccer","Brazilian Series A"),
+                    Leagues(17,"4354","Ukrainian Premier League","Soccer","Ukrainian Premier League"),
+                    Leagues(18,"4355","Russian Football Premier League","Soccer","Чемпионат России по футболу, Russian Football Premier League"),
+                    Leagues(19,"4356","Australian A-League","Soccer","A-League, Australian A-League"),
+                    Leagues(20,"4358","Norwegian LineSeries","Soccer","LineSeries, Norwegian LineSeries"),
+                    Leagues(21,"4359","Chinese Super League","Soccer","Chinese Super League")
 
                 )
 
@@ -129,7 +132,7 @@ class MainActivity : ComponentActivity() {
                         val intent = Intent(this@MainActivity, AddActivity::class.java)
 
                         scope.launch {
-                            intent.putExtra("Desc",retrieveData(leaguesDao))
+                            intent.putExtra("Desc",retrieveData(clubsDao))
                             startActivity(intent)
                             Toast.makeText(context,"Saved Successfully !", Toast.LENGTH_SHORT).show()
                         }
@@ -184,25 +187,27 @@ class MainActivity : ComponentActivity() {
                 //adding all the details of the leagues
                 leaguesDao.insertAll(
 
-                    Leagues(1,"4328","English Premier League","Soccer","Premier League, EPL","","","","","","","","","","",""),
-                    Leagues(2,"4329","English League Championship","Soccer","Championship","","","","","","","","","","",""),
-                    Leagues(3,"4330","Scottish Premier League","Soccer","Scottish Premiership, SPL","","","","","","","","","","",""),
-                    Leagues(4,"4331","German Bundesliga","Soccer","Bundesliga, Fuzzball-Bundesliga","","","","","","","","","","",""),
-                    Leagues(5,"4332","Italian Series A","Soccer","Series A","","","","","","","","","","",""),
-                    Leagues(6,"4334","French League 1","Soccer","League 1 Conformal","","","","","","","","","","",""),
-                    Leagues(7,"4336","Greek Super league Greece", "Soccer", "","","","","","","","","","","",""),
-                    Leagues(8,"4337","Dutch Divisive","Soccer", "Divisive","","","","","","","","","","",""),
-                    Leagues(9,"4340","Danish Superlative","Soccer","","","","","","","","","","","",""),
-                    Leagues(10,"4346","American Major League Soccer","Soccer","MLS, Major League Soccer","","","","","","","","","","",""),
-                    Leagues(11,"4347","Swedish Allusiveness","Soccer","Fotbollsallsvenskan","","","","","","","","","","",""),
-                    Leagues(12,"4350","Mexican Primer League","Soccer","Ligand MX","","","","","","","","","","",""),
-                    Leagues(13,"4351","Brazilian Series A","Soccer","","","","","","","","","","","",""),
-                    Leagues(14,"4354","Ukrainian Premier League","Soccer","","","","","","","","","","","",""),
-                    Leagues(15,"4355","Russian Football Premier League","Soccer","Чемпионат России по футболу","","","","","","","","","","",""),
-                    Leagues(16,"4356","Australian A-League","Soccer","A-League","","","","","","","","","","",""),
-                    Leagues(17,"4358","Norwegian LineSeries","Soccer","LineSeries","","","","","","","","","","",""),
-                    Leagues(18,"4359","Chinese Super League","Soccer","","","","","","","","","","","","")
-
+                    Leagues(1,"4329","English League Championship","Soccer","Championship, English League Championship"),
+                    Leagues(2,"4330","Scottish Premier League","Soccer","Scottish Premiership, SPL, Scottish Premier League"),
+                    Leagues(3,"4331","German Bundesliga","Soccer","Bundesliga, Fuzzball-Bundesliga, German Bundesliga"),
+                    Leagues(4,"4332","Italian Series A","Soccer","Series A, Italian Series A"),
+                    Leagues(5,"4334","French League 1","Soccer","League 1 Conformal, French League 1"),
+                    Leagues(6,"4335","Spanish La Ligand","Soccer","LaLigand Santander, La Ligand, Spanish La Ligand"),
+                    Leagues(7,"4336","Greek Super league Greece","Soccer","Greek Super league Greece"),
+                    Leagues(8,"4337","Dutch Eredivisie","Soccer","Divisive, Dutch Eredivisie"),
+                    Leagues(9,"4338","Belgian First Division A","Soccer","Jupiter Pro League, Belgian First Division A"),
+                    Leagues(10,"4339","Turkish Super Lig","Soccer","Super Lig, Turkish Super Lig"),
+                    Leagues(11,"4340","Danish Superlative","Soccer","Danish Superlative"),
+                    Leagues(12,"4344","Portuguese Prairie Ligand","Soccer","Ligand NOS, Portuguese Prairie Ligand"),
+                    Leagues(13,"4346","American Major League Soccer","Soccer","MLS, Major League Soccer, American Major League Soccer"),
+                    Leagues(14,"4347","Swedish Allusiveness","Soccer","Fotbollsallsvenskan, Swedish Allusiveness"),
+                    Leagues(15,"4350","Mexican Primer League","Soccer","Ligand MX, Mexican Primer League"),
+                    Leagues(16,"4351","Brazilian Series A","Soccer","Brazilian Series A"),
+                    Leagues(17,"4354","Ukrainian Premier League","Soccer","Ukrainian Premier League"),
+                    Leagues(18,"4355","Russian Football Premier League","Soccer","Чемпионат России по футболу, Russian Football Premier League"),
+                    Leagues(19,"4356","Australian A-League","Soccer","A-League, Australian A-League"),
+                    Leagues(20,"4358","Norwegian LineSeries","Soccer","LineSeries, Norwegian LineSeries"),
+                    Leagues(21,"4359","Chinese Super League","Soccer","Chinese Super League")
                 )
             }
 
@@ -226,7 +231,7 @@ class MainActivity : ComponentActivity() {
                         val intent = Intent(this@MainActivity, AddActivity::class.java)
 
                         scope.launch {
-                            intent.putExtra("Desc",retrieveData(leaguesDao))
+                            intent.putExtra("Desc",retrieveData(clubsDao))
                             startActivity(intent)
                             Toast.makeText(context,"Load Successfully !", Toast.LENGTH_SHORT).show()
                         }
@@ -265,10 +270,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-suspend fun retrieveData(leaguesDao: LeaguesDao): String {
+suspend fun retrieveData(clubsDao: ClubsDao): String {
     var allLeagues = ""
     // read the data
-    val leagues: List<Leagues> = leaguesDao.getAll()
+    val leagues: List<Clubs> = clubsDao.getAll()
 
     for (i in leagues)
 

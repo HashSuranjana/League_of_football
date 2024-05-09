@@ -107,7 +107,7 @@ class SearchClubs : ComponentActivity() {
                 Row {
                     Button(onClick = {
                         scope.launch {
-                            clubsFound = clubsFinding(searchTerm, leaguesDao)
+                            clubsFound = clubsFinding(searchTerm, clubsDao)
 
                         }
                     }, modifier = Modifier
@@ -157,7 +157,7 @@ class SearchClubs : ComponentActivity() {
                         verticalAlignment = Alignment.CenterVertically,) {
                         Button(onClick = {
                             scope.launch {
-                                clubsFound = clubsFinding(searchTerm, leaguesDao)
+                                clubsFound = clubsFinding(searchTerm, clubsDao)
 
                             }
                         }, modifier = Modifier
@@ -209,13 +209,13 @@ class SearchClubs : ComponentActivity() {
     }
 
     //function to check the club's letters
-    private suspend fun clubsFinding(searchTerm:String, leaguesDao: LeaguesDao): String {
+    private suspend fun clubsFinding(searchTerm:String, clubsDao: ClubsDao): String {
 
         var allLeagues = "" //initialize the display message
 
         var count = 0 // initialize a count variable
 
-        val leagues: List<Leagues> = leaguesDao.getAll()    // read the data
+        val leagues: List<Clubs> = clubsDao.getAll()    // read the data
 
         runBlocking {
             launch {

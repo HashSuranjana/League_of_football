@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,7 +30,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -69,7 +67,7 @@ class ClubsByLeague : ComponentActivity() {
         }
     }
 
-    private var newList = mutableListOf<Leagues>() //List for save clubs data getting from the web service
+    private var newList = mutableListOf<Clubs>() //List for save clubs data getting from the web service
 
     @Composable
     fun LeagueSearch() {
@@ -126,9 +124,9 @@ class ClubsByLeague : ComponentActivity() {
 
                     Button(onClick = {
                         scope.launch {
-                            leaguesDao.deleteAll()
+                            clubsDao.deleteAll()
                             for (clubs in newList) {
-                                leaguesDao.insertAll(clubs)
+                                clubsDao.insertAll(clubs)
                             }
                         }
                     }, modifier =Modifier.padding(top = 10.dp).width(150.dp)) {
@@ -199,9 +197,9 @@ class ClubsByLeague : ComponentActivity() {
 
                         Button(onClick = {
                             scope.launch {
-                                leaguesDao.deleteAll()
+                                clubsDao.deleteAll()
                                 for (clubs in newList) {
-                                    leaguesDao.insertAll(clubs)
+                                    clubsDao.insertAll(clubs)
                                 }
                             }
                         }, modifier = Modifier
@@ -285,7 +283,7 @@ class ClubsByLeague : ComponentActivity() {
             allClubs.append("Jersey :" + club.getString("strTeamJersey") + "\n")
             allClubs.append("Team Logo :" + club.getString("strTeamLogo") + "\n\n\n")
 
-            val newClub = Leagues(i+1,club.getString("idTeam"),
+            val newClub = Clubs(i+1,club.getString("idTeam"),
                                         club.getString("strTeam") ,
                                         club.getString( "strTeamShort"),
                                         club.getString( "strAlternate"),
