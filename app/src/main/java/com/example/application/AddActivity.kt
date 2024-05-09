@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,9 +42,8 @@ class AddActivity : ComponentActivity() {
 
                                 if (info != null) {
                                     Text(
-                                        modifier = Modifier
-                                            .fillMaxWidth().padding(start=20.dp, top = 30.dp),
-                                        style = TextStyle(textAlign = TextAlign.Start, fontSize = 20.sp),
+                                        modifier = Modifier.fillMaxWidth().padding(start=20.dp, top = 30.dp),
+                                        style = TextStyle(textAlign = TextAlign.Start, fontSize = 20.sp, fontWeight = FontWeight.Bold),
                                         text = info
                                     )
                                 }
@@ -58,9 +58,8 @@ class AddActivity : ComponentActivity() {
 
                                 if (info != null) {
                                     Text(
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
-                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth().padding(start=150.dp, top = 30.dp),
+                                        style = TextStyle(textAlign = TextAlign.Start, fontSize = 30.sp, fontWeight = FontWeight.Bold),
                                         text = info
                                     )
                                 }

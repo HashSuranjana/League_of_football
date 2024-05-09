@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +19,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,8 +33,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.room.Room
@@ -104,9 +111,14 @@ class MainActivity : ComponentActivity() {
             }
 
             Column(modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 40.dp),
-                verticalArrangement = Arrangement.Bottom){
+                .fillMaxSize().background(Color(193, 221, 131)),
+                verticalArrangement = Arrangement.Top){
+
+                Box(modifier = Modifier.fillMaxWidth()){
+                    Image(painter = painterResource(id = R.drawable.logo), contentDescription = null)
+                }
+
+                Spacer(modifier = Modifier.size(30.dp))
 
                 Row(modifier = Modifier
                     .fillMaxWidth(),
@@ -195,9 +207,15 @@ class MainActivity : ComponentActivity() {
             }
 
             Column(modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 40.dp),
+                .fillMaxSize().background(Color(193, 221, 131))
+                .padding(bottom = 10.dp),
                 verticalArrangement = Arrangement.Bottom){
+
+                Box(modifier = Modifier.fillMaxWidth()){
+                    Image(painter = painterResource(id = R.drawable.logo2), contentDescription = null)
+                }
+
+                Spacer(modifier = Modifier.size(20.dp))
 
                 Row(modifier = Modifier
                     .fillMaxWidth(),
