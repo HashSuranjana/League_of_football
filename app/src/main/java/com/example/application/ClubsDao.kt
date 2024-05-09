@@ -9,7 +9,7 @@ import androidx.room.Query
 
 interface ClubsDao {
 
-    @Query("select * from leagues")
+    @Query("select * from clubs")
     suspend fun getAll(): List<Clubs>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

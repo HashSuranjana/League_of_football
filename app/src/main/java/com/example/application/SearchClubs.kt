@@ -63,6 +63,7 @@ class SearchClubs : ComponentActivity() {
     }
 
     private val flagList = mutableListOf<Bitmap>()
+    private val clubFoundList = mutableListOf<String>()
 
 
     @Composable
@@ -71,7 +72,7 @@ class SearchClubs : ComponentActivity() {
         LocalContext.current
 
         var searchTerm by rememberSaveable { mutableStateOf("") }
-        
+
         var clubsFound by rememberSaveable { mutableStateOf("") }
 
         val scope = rememberCoroutineScope()  // Creates a CoroutineScope bound to the GUI composable lifecycle
@@ -108,7 +109,6 @@ class SearchClubs : ComponentActivity() {
                     Button(onClick = {
                         scope.launch {
                             clubsFound = clubsFinding(searchTerm, clubsDao)
-
                         }
                     }, modifier = Modifier
                         .padding(top = 10.dp)
@@ -119,13 +119,15 @@ class SearchClubs : ComponentActivity() {
 
                 Spacer(modifier = Modifier.size(20.dp))
 
-                Text(text = clubsFound,
-                    modifier =  Modifier.verticalScroll(rememberScrollState())
-                )
+                for (i in 0..<flagList.size) {
 
-                for (i in flagList) {
+                    Row {
 
-                    Image(bitmap = i.asImageBitmap(), contentDescription =null,modifier = Modifier.size(100.dp) )
+                        Image(bitmap =flagList[i].asImageBitmap(), contentDescription =null,modifier = Modifier.size(100.dp) )
+
+                        Text(text = clubFoundList[i])
+
+                    }
                 }
 
             }
@@ -175,14 +177,15 @@ class SearchClubs : ComponentActivity() {
                     .width(545.dp)
                     .padding(start = 10.dp)) {
 
-                    Text(text = clubsFound,
-                        modifier = Modifier.verticalScroll(rememberScrollState()),
-                        style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    )
+                    for (i in 0..<flagList.size) {
 
-                    for (i in flagList) {
+                        Row {
 
-                        Image(bitmap = i.asImageBitmap(), contentDescription =null,modifier = Modifier.size(100.dp) )
+                            Image(bitmap =flagList[i].asImageBitmap(), contentDescription =null,modifier = Modifier.size(100.dp) )
+
+                            Text(text = clubFoundList[i])
+
+                        }
                     }
                 }
 
@@ -211,8 +214,6 @@ class SearchClubs : ComponentActivity() {
     //function to check the club's letters
     private suspend fun clubsFinding(searchTerm:String, clubsDao: ClubsDao): String {
 
-        var allLeagues = "" //initialize the display message
-
         var count = 0 // initialize a count variable
 
         val leagues: List<Clubs> = clubsDao.getAll()    // read the data
@@ -221,9 +222,10 @@ class SearchClubs : ComponentActivity() {
             launch {
 
                 //check whether flag list is empty or not
-                if (flagList.isNotEmpty()) {
+                if (flagList.isNotEmpty() || clubFoundList.isNotEmpty()) {
 
                     flagList.clear()  //clear the flag list
+                    clubFoundList.clear() //clear the club list
                 }
 
                 //run through the league list
@@ -233,7 +235,7 @@ class SearchClubs : ComponentActivity() {
 
                     if(i.strTeam?.contains(searchTerm,ignoreCase = true) == true || i.strLeague?.contains(searchTerm,ignoreCase = true)==true){
 
-                        allLeagues += " ${ i.strTeam } \n\n " //append the team name if condition is true
+                        i.strTeam?.let { clubFoundList.add(count, it) }
 
                         i.strTeamLogo?.let { loadImageFromUrl(it)?.let { flagList.add(count,it) } } //get the teams logo if it's available and add it to flagList
                         count++   //increment the count
@@ -244,8 +246,7 @@ class SearchClubs : ComponentActivity() {
                 }
             }
         }
-
-        return allLeagues  //return displaying content
+        return ""
     }
 
 }
