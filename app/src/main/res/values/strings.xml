@@ -3,4 +3,5 @@
     <string name="title_activity_add">AddActivity</string>
     <string name="title_activity_clubs_by_league">ClubsByLeague</string>
     <string name="title_activity_search_clubs">SearchClubs</string>
+    <string name="title_activity_clubs_jersey">ClubsJersey</string>
 </resources>

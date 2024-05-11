@@ -202,6 +202,7 @@ class ClubsByLeague : ComponentActivity() {
                                     clubsDao.insertAll(clubs)
                                 }
                             }
+                            Toast.makeText(context,"Saved Successfully !", Toast.LENGTH_SHORT).show()
                         }, modifier = Modifier
                             .padding(top = 10.dp)
                             .width(150.dp)) {
@@ -233,7 +234,10 @@ class ClubsByLeague : ComponentActivity() {
 
         val url = URL(urlString)
 
-        val con: HttpURLConnection = url.openConnection() as HttpURLConnection
+        val con: HttpURLConnection =
+            withContext(Dispatchers.IO) {
+                url.openConnection()
+            } as HttpURLConnection
 
 
         val strb = StringBuilder() // collecting all the JSON string
@@ -262,7 +266,7 @@ class ClubsByLeague : ComponentActivity() {
         val jsonArray: JSONArray = json.getJSONArray("teams")
 
         // extract all the clubs from the JSON array
-        for (i in 0..jsonArray.length() - 1) {
+        for (i in 0..<jsonArray.length()) {
 
             val club: JSONObject = jsonArray[i] as JSONObject // this is a json object
 

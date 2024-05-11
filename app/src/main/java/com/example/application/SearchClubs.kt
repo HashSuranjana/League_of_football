@@ -4,9 +4,11 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +26,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -69,9 +72,24 @@ class SearchClubs : ComponentActivity() {
     @Composable
     fun ClubsSearch(){
 
-        LocalContext.current
+        val context = LocalContext.current
 
         var searchTerm by rememberSaveable { mutableStateOf("") }
+
+        var flagList by rememberSaveable { mutableStateOf(mutableListOf<Bitmap>()) }
+        var clubFoundList by rememberSaveable { mutableStateOf(mutableListOf<String>()) }
+
+        var flagItems by rememberSaveable { mutableStateOf(mutableListOf<Bitmap>()) }
+
+        for(i in flagList) {
+            flagItems.add(i)
+        }
+
+        var flagItemNames by rememberSaveable { mutableStateOf(mutableListOf<String>()) }
+
+        for(i in clubFoundList) {
+            flagItemNames.add(i)
+        }
 
         var clubsFound by rememberSaveable { mutableStateOf("") }
 
@@ -99,7 +117,7 @@ class SearchClubs : ComponentActivity() {
                     .fillMaxWidth()
                     .padding(10.dp)) {
 
-                    TextField(value = searchTerm, onValueChange = { searchTerm = it }, singleLine = true,
+                    TextField(value = searchTerm, onValueChange = { searchTerm = it },
                         modifier = Modifier.width(400.dp))
                 }
 
@@ -108,7 +126,11 @@ class SearchClubs : ComponentActivity() {
                 Row {
                     Button(onClick = {
                         scope.launch {
-                            clubsFound = clubsFinding(searchTerm, clubsDao)
+                            if(searchTerm != "") {
+                                clubsFound = clubsFinding(searchTerm, clubsDao)
+                            }else {
+                                Toast.makeText(context,"Please Enter Something!", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }, modifier = Modifier
                         .padding(top = 10.dp)
@@ -119,14 +141,24 @@ class SearchClubs : ComponentActivity() {
 
                 Spacer(modifier = Modifier.size(20.dp))
 
-                for (i in 0..<flagList.size) {
+                Column(
+                    modifier =Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    for (i in 0..<flagList.size) {
 
-                    Row {
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start) {
 
-                        Image(bitmap =flagList[i].asImageBitmap(), contentDescription =null,modifier = Modifier.size(100.dp) )
+                            Image(bitmap =flagItems[i].asImageBitmap(), contentDescription =null,modifier = Modifier.size(100.dp))
 
-                        Text(text = clubFoundList[i])
+                            Spacer(modifier = Modifier.size(100.dp))
 
+                            Text(text = flagItemNames[i], style = TextStyle(fontSize = 25.sp, fontWeight = FontWeight.Bold))
+
+                        }
                     }
                 }
 
@@ -149,7 +181,7 @@ class SearchClubs : ComponentActivity() {
 
                     Column(modifier = Modifier.padding(start = 20.dp)) {
 
-                        TextField(value = searchTerm, onValueChange = { searchTerm = it }, singleLine = true)
+                        TextField(value = searchTerm, onValueChange = { searchTerm = it })
                     }
 
                     Spacer(modifier = Modifier.size(30.dp))
@@ -159,7 +191,11 @@ class SearchClubs : ComponentActivity() {
                         verticalAlignment = Alignment.CenterVertically,) {
                         Button(onClick = {
                             scope.launch {
-                                clubsFound = clubsFinding(searchTerm, clubsDao)
+                                if(searchTerm != "") {
+                                    clubsFound = clubsFinding(searchTerm, clubsDao)
+                                }else {
+                                    Toast.makeText(context,"Please Enter Something!", Toast.LENGTH_SHORT).show()
+                                }
 
                             }
                         }, modifier = Modifier
@@ -167,23 +203,28 @@ class SearchClubs : ComponentActivity() {
                             .width(150.dp)) {
                             Text("Search")
                         }
-
-
                     }
                 }
 
                 Column(modifier= Modifier
                     .fillMaxHeight()
                     .width(545.dp)
-                    .padding(start = 10.dp)) {
+                    .padding(start = 10.dp)
+                    .verticalScroll(rememberScrollState())) {
 
                     for (i in 0..<flagList.size) {
 
-                        Row {
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Start) {
 
-                            Image(bitmap =flagList[i].asImageBitmap(), contentDescription =null,modifier = Modifier.size(100.dp) )
+                            Image(bitmap =flagItems[i].asImageBitmap(), contentDescription =null,modifier = Modifier.size(150.dp))
 
-                            Text(text = clubFoundList[i])
+                            Spacer(modifier = Modifier.size(140.dp))
+
+                            Text(text = flagItemNames[i], style = TextStyle(fontSize = 25.sp, fontWeight = FontWeight.Bold))
 
                         }
                     }
@@ -218,34 +259,34 @@ class SearchClubs : ComponentActivity() {
 
         val leagues: List<Clubs> = clubsDao.getAll()    // read the data
 
-        runBlocking {
-            launch {
 
-                //check whether flag list is empty or not
-                if (flagList.isNotEmpty() || clubFoundList.isNotEmpty()) {
 
-                    flagList.clear()  //clear the flag list
-                    clubFoundList.clear() //clear the club list
-                }
+        //check whether flag list is empty or not
+        if (flagList.isNotEmpty() || clubFoundList.isNotEmpty()) {
 
-                //run through the league list
-                for(i in leagues) {
+            flagList.clear()  //clear the flag list
+            clubFoundList.clear() //clear the club list
+        }
 
-                    //checking the search term is in the strTeam or in the strLeague Name
+        //run through the league list
 
-                    if(i.strTeam?.contains(searchTerm,ignoreCase = true) == true || i.strLeague?.contains(searchTerm,ignoreCase = true)==true){
+        for(i in leagues) {
 
-                        i.strTeam?.let { clubFoundList.add(count, it) }
+            //checking the search term is in the strTeam or in the strLeague Name
 
-                        i.strTeamLogo?.let { loadImageFromUrl(it)?.let { flagList.add(count,it) } } //get the teams logo if it's available and add it to flagList
-                        count++   //increment the count
+            if(i.strTeam?.contains(searchTerm,ignoreCase = true) == true || i.strLeague?.contains(searchTerm,ignoreCase = true)==true){
 
-                    }else{
-                        println("No Such Letters !")
-                    }
-                }
+                i.strTeam?.let { clubFoundList.add(count, it) }
+
+                i.strTeamLogo?.let { loadImageFromUrl(it)?.let { flagList.add(count,it) } } //get the teams logo if it's available and add it to flagList
+                count++   //increment the count
+
+            }else{
+                println("No Such Letters !")
             }
         }
+
+
         return ""
     }
 
