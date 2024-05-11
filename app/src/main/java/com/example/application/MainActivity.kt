@@ -63,6 +63,7 @@ class MainActivity : ComponentActivity() {
             ApplicationTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+
                     MainScreen() // calling the composable function
                 }
             }
@@ -128,6 +129,7 @@ class MainActivity : ComponentActivity() {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround){
 
+                    //Button to divert into Adding leagues to the Database
                     Button(onClick = {
                         val intent = Intent(this@MainActivity, AddActivity::class.java)
 
@@ -143,6 +145,7 @@ class MainActivity : ComponentActivity() {
 
                     }
 
+                    //Button to divert into Search for clubs by League
                     Button(onClick = {
                         val intent = Intent(this@MainActivity,ClubsByLeague::class.java)
                         startActivity(intent)
@@ -157,6 +160,7 @@ class MainActivity : ComponentActivity() {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center){
 
+                    //Button to divert into Search for Clubs
                     Button(onClick = {
                         val intent = Intent(this@MainActivity,SearchClubs::class.java)
                         startActivity(intent)
@@ -270,6 +274,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+//function to show all the details that has saved into the data base
 suspend fun retrieveData(clubsDao: ClubsDao): String {
     var allLeagues = ""
     // read the data
@@ -295,7 +300,7 @@ suspend fun retrieveData(clubsDao: ClubsDao): String {
                 "\n\n\n"
 
 
-    return allLeagues
+    return allLeagues // returns a String
 }
 
 

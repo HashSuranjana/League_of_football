@@ -1,5 +1,7 @@
+
 package com.example.application
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -27,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -59,44 +62,31 @@ class SearchClubs : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ClubsSearch()
+                    ClubsSearch()  //calling the composable function
                 }
             }
         }
     }
 
-    private val flagList = mutableListOf<Bitmap>()
-    private val clubFoundList = mutableListOf<String>()
 
 
+    @SuppressLint("MutableCollectionMutableState")
     @Composable
     fun ClubsSearch(){
 
         val context = LocalContext.current
 
-        var searchTerm by rememberSaveable { mutableStateOf("") }
+        var searchTerm by rememberSaveable { mutableStateOf("") } //initializing the searchTerm
 
-        var flagList by rememberSaveable { mutableStateOf(mutableListOf<Bitmap>()) }
-        var clubFoundList by rememberSaveable { mutableStateOf(mutableListOf<String>()) }
+        var buttonClicked by rememberSaveable { mutableStateOf(false) }  //initializing a button click checking variable
 
-        var flagItems by rememberSaveable { mutableStateOf(mutableListOf<Bitmap>()) }
+        val scope = rememberCoroutineScope() // Creates a CoroutineScope bound to the GUI composable lifecycle
 
-        for(i in flagList) {
-            flagItems.add(i)
-        }
-
-        var flagItemNames by rememberSaveable { mutableStateOf(mutableListOf<String>()) }
-
-        for(i in clubFoundList) {
-            flagItemNames.add(i)
-        }
-
-        var clubsFound by rememberSaveable { mutableStateOf("") }
-
-        val scope = rememberCoroutineScope()  // Creates a CoroutineScope bound to the GUI composable lifecycle
+        var clubsFound by rememberSaveable { mutableStateOf<List<Clubs>>(emptyList()) }
 
         val orientation = LocalConfiguration.current.orientation // getting the orientation of the phone
 
+        //check the phone's orientation
         if(orientation == Configuration.ORIENTATION_PORTRAIT) {
 
             Column(
@@ -123,56 +113,73 @@ class SearchClubs : ComponentActivity() {
 
                 Spacer(modifier = Modifier.size(20.dp))
 
+
                 Row {
+
                     Button(onClick = {
-                        scope.launch {
-                            if(searchTerm != "") {
+                        //check whether user enter something or not
+                        if(searchTerm != "") {
+
+                            scope.launch {
+
+                                buttonClicked = true
                                 clubsFound = clubsFinding(searchTerm, clubsDao)
-                            }else {
-                                Toast.makeText(context,"Please Enter Something!", Toast.LENGTH_SHORT).show()
+
                             }
+                        }else {
+                            Toast.makeText(context,"Please Enter Something!", Toast.LENGTH_SHORT).show()
                         }
                     }, modifier = Modifier
                         .padding(top = 10.dp)
                         .width(150.dp)) {
                         Text("Search")
                     }
+
                 }
 
                 Spacer(modifier = Modifier.size(20.dp))
 
-                Column(
-                    modifier =Modifier.verticalScroll(rememberScrollState())
-                ) {
-                    for (i in 0..<flagList.size) {
+                //display only the when the button is clicked
+                if(buttonClicked){
 
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Start) {
+                    Column(
+                        modifier =Modifier.verticalScroll(rememberScrollState())
+                    ) {
 
-                            Image(bitmap =flagItems[i].asImageBitmap(), contentDescription =null,modifier = Modifier.size(100.dp))
+                        //runs through the List
+                        for (i in clubsFound) {
 
-                            Spacer(modifier = Modifier.size(100.dp))
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start) {
 
-                            Text(text = flagItemNames[i], style = TextStyle(fontSize = 25.sp, fontWeight = FontWeight.Bold))
+                                //displaying the team logo
+                                Image(bitmap = i.strTeamLogo?.let { loadImageFromUrl(it)!!.asImageBitmap() }!!, contentDescription =null,modifier = Modifier.size(100.dp))
 
+                                Spacer(modifier = Modifier.size(100.dp))
+
+                                //displaying the team name
+                                i.strTeam?.let { Text(text = it, style = TextStyle(fontSize = 25.sp, fontWeight = FontWeight.Bold)) }
+
+                            }
                         }
                     }
                 }
-
             }
-        }else {
-            Row (modifier = Modifier.fillMaxSize()){
+        }else { //if phone's in Landscape mode
+
+            Row(modifier = Modifier.fillMaxSize()) {
 
                 Column(
                     modifier = Modifier
                         .fillMaxHeight(),
                     horizontalAlignment = Alignment.Start
-                ){
+                ) {
 
-                    Text(text = "Find Your Club .......",
+                    Text(
+                        text = "Find Your Club .......",
                         style = TextStyle(fontSize = 25.sp, fontWeight = FontWeight.ExtraBold),
                         modifier = Modifier.padding(top = 30.dp, start = 20.dp)
                     )
@@ -186,33 +193,43 @@ class SearchClubs : ComponentActivity() {
 
                     Spacer(modifier = Modifier.size(30.dp))
 
-                    Row(modifier = Modifier
-                        .padding(start = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically,) {
-                        Button(onClick = {
-                            scope.launch {
-                                if(searchTerm != "") {
-                                    clubsFound = clubsFinding(searchTerm, clubsDao)
-                                }else {
-                                    Toast.makeText(context,"Please Enter Something!", Toast.LENGTH_SHORT).show()
-                                }
+                    Row(
+                        modifier = Modifier
+                            .padding(start = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    if (searchTerm != "") {
+                                        clubsFound = clubsFinding(searchTerm, clubsDao)
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            "Please Enter Something!",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
 
-                            }
-                        }, modifier = Modifier
-                            .padding(top = 10.dp)
-                            .width(150.dp)) {
+                                }
+                            }, modifier = Modifier
+                                .padding(top = 10.dp)
+                                .width(150.dp)
+                        ) {
                             Text("Search")
                         }
                     }
                 }
 
-                Column(modifier= Modifier
-                    .fillMaxHeight()
-                    .width(545.dp)
-                    .padding(start = 10.dp)
-                    .verticalScroll(rememberScrollState())) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(545.dp)
+                        .padding(start = 20.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
 
-                    for (i in 0..<flagList.size) {
+                    for (i in clubsFound) {
 
                         Row(modifier = Modifier
                             .fillMaxWidth()
@@ -220,19 +237,17 @@ class SearchClubs : ComponentActivity() {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Start) {
 
-                            Image(bitmap =flagItems[i].asImageBitmap(), contentDescription =null,modifier = Modifier.size(150.dp))
+                            Image(bitmap = i.strTeamLogo?.let { loadImageFromUrl(it)!!.asImageBitmap() }!!, contentDescription =null,modifier = Modifier.size(100.dp))
 
-                            Spacer(modifier = Modifier.size(140.dp))
+                            Spacer(modifier = Modifier.size(50.dp))
 
-                            Text(text = flagItemNames[i], style = TextStyle(fontSize = 25.sp, fontWeight = FontWeight.Bold))
+                            i.strTeam?.let { Text(text = it, style = TextStyle(fontSize = 25.sp, fontWeight = FontWeight.Bold)) }
 
                         }
                     }
                 }
-
             }
         }
-
     }
 
     //Retrieving the logo of the club
@@ -253,42 +268,26 @@ class SearchClubs : ComponentActivity() {
     }
 
     //function to check the club's letters
-    private suspend fun clubsFinding(searchTerm:String, clubsDao: ClubsDao): String {
+    private suspend fun clubsFinding(searchTerm:String, clubsDao: ClubsDao): List<Clubs> {
 
-        var count = 0 // initialize a count variable
+        val clubsFound = mutableListOf<Clubs>() //initializing a List of clubs
 
-        val leagues: List<Clubs> = clubsDao.getAll()    // read the data
+        withContext(Dispatchers.IO) {
 
+            val leagues: List<Clubs> = clubsDao.filterClubs(searchTerm)  //get the team objects that contains the searchTerm
 
+            //run through the league items
+            for (i in leagues) {
+                //prevent adding duplicates
+                if(!clubsFound.contains(i)){
 
-        //check whether flag list is empty or not
-        if (flagList.isNotEmpty() || clubFoundList.isNotEmpty()) {
-
-            flagList.clear()  //clear the flag list
-            clubFoundList.clear() //clear the club list
-        }
-
-        //run through the league list
-
-        for(i in leagues) {
-
-            //checking the search term is in the strTeam or in the strLeague Name
-
-            if(i.strTeam?.contains(searchTerm,ignoreCase = true) == true || i.strLeague?.contains(searchTerm,ignoreCase = true)==true){
-
-                i.strTeam?.let { clubFoundList.add(count, it) }
-
-                i.strTeamLogo?.let { loadImageFromUrl(it)?.let { flagList.add(count,it) } } //get the teams logo if it's available and add it to flagList
-                count++   //increment the count
-
-            }else{
-                println("No Such Letters !")
+                    clubsFound.addAll(leagues) //adding club details
+                }
             }
         }
 
 
-        return ""
+        return clubsFound  //returning the list
     }
 
 }
-

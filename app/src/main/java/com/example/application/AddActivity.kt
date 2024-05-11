@@ -30,7 +30,7 @@ class AddActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val info = intent.getStringExtra("Desc")
+                    val info = intent.getStringExtra("Desc") //getting the details
 
                     val orientation = LocalConfiguration.current.orientation // getting the orientation of the phone
 
@@ -39,7 +39,7 @@ class AddActivity : ComponentActivity() {
                         LazyColumn {
 
                             items(1) { index ->
-
+                                //displaying the details
                                 if (info != null) {
                                     Text(
                                         modifier = Modifier.fillMaxWidth().padding(start=20.dp, top = 30.dp),

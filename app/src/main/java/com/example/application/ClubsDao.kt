@@ -9,16 +9,17 @@ import androidx.room.Query
 
 interface ClubsDao {
 
-    @Query("select * from clubs")
+    @Query("select * from clubs") //returns all items in clubs
     suspend fun getAll(): List<Clubs>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg clubs: Clubs)
 
-    @Query("select * from clubs where strTeam LIKE :name")
-    fun findByLastName(name: String): Clubs
+    @Query("SELECT * FROM clubs WHERE strTeam LIKE '%' || :name || '%'") //get all items if strTeam name contains name
+    fun filterClubs(name: String): List<Clubs>
 
-    @Query("delete from clubs")
+
+    @Query("delete from clubs") //delete all items in clubs
     suspend fun deleteAll()
 
 }
